@@ -582,6 +582,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;
   margin-top:18px;display:flex;align-items:center;gap:8px;
   animation:iclBadgeIn .6s .35s cubic-bezier(.34,1.56,.64,1) both;
 }
+@keyframes fadeIn{
+  from{opacity:0}to{opacity:1}
+}
+@keyframes fadeOut{
+  from{opacity:1}to{opacity:0}
+}
 
 .hide{display:none!important}
 </style>
@@ -616,7 +622,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;
     <div class="story-text" id="storyText"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;clear:both">
       <button class="btn-tts" id="btnTtsStory" onclick="ttsStop()">
-        <span class="tts-icon">🔊</span><span id="ttsStoryLabel">■ HENTIKAN</span>
+        <span class="tts-icon">🔊</span><span id="ttsStoryLabel">🔊 DENGARKAN</span>
       </button>
       <button class="btn-story-next" id="btnStoryNext" style="margin-top:0">LANJUT ▶</button>
     </div>
@@ -644,6 +650,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;
     <button class="btn-hsetup-confirm" id="btnHsetupOK" onclick="hsetupConfirm()">
       ⚔ MULAI PETUALANGAN
     </button>
+  </div>
+</div>
+
+<div id="sIslandSelect" class="screen">
+  <div class="materi-veil"></div>
+  <div class="hsetup-box" style="width: min(500px, 95vw); max-height: 85vh;">
+    <div class="hsetup-eyebrow">PETA PETUALANGAN</div>
+    <div id="playerStats" style="width: 100%; padding: 10px; background: rgba(255,215,0,0.05); border-radius: 10px; font-size: 13px; color: var(--gold);">
+      </div>
+    <div id="islandList" style="width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+      </div>
   </div>
 </div>
 
@@ -918,6 +935,7 @@ var G = {
 
   diamonds  : 0,
   fragments : 0,
+  completedIslands : [],
 
   iqQuestions : [],
   iqIdx       : 0,
@@ -1094,12 +1112,12 @@ function hsetupConfirm() {
   G.hero.dmgS1   = h.damage_skil1;
   G.hero.dmgS2   = h.damage_skil2;
   G.hero.dmgUlti = h.damage_ulti;
-  G.pulauIdx = 0;
+  G.pulauIdx = -1; // Set to -1 sebagai indikator belum memilih pulau
   G.diamonds = 0;
   G.fragments = 0;
 
-  // Lanjut ke prolog pulau pertama
-  gotoIsland(0, 'prolog');
+  // Lanjut ke halaman pemilihan pulau
+  showIslandSelectScreen();
 }
 
 // ════════════════════════════════════════════
@@ -1172,6 +1190,65 @@ function getQuisByPulauIdx(pulauIdx) {
 function getPulauNo(pulau) {
   return pulau._no || (pulau._idx + 1) || 1;
 }
+
+// ════════════════════════════════════════════
+//  ISLAND SELECT SCREEN
+// ════════════════════════════════════════════
+function showIslandSelectScreen() {
+  var playerStatsEl = document.getElementById('playerStats');
+  var islandListEl = document.getElementById('islandList');
+  
+  playerStatsEl.innerHTML = '<div style="display:flex; justify-content:space-around; gap:10px;">'+
+    '<div>👤 ' + G.heroName + '</div>'+
+    '<div>💎 Diamonds: ' + G.diamonds + '</div>'+
+    '<div>🔷 Fragments: ' + G.fragments + '</div>'+
+    '</div>';
+  
+  islandListEl.innerHTML = '';
+  
+  (D.pulau || []).forEach(function(pulau, idx) {
+    var isCompleted = G.completedIslands && G.completedIslands.indexOf(idx) !== -1;
+    var card = document.createElement('div');
+    card.className = 'island-card' + (isCompleted ? ' completed' : '');
+    card.style.cssText = 'cursor:pointer; padding:16px; border-radius:10px; ' +
+      'background:' + (isCompleted ? 'rgba(57,255,20,0.1)' : 'rgba(0,229,255,0.1)') + '; ' +
+      'border:1.5px solid ' + (isCompleted ? 'rgba(57,255,20,0.4)' : 'rgba(0,229,255,0.3)') + '; ' +
+      'transition:all 0.25s;';
+    
+    var pulauNo = getPulauNo(pulau);
+    var title = pulau.nama_pulau || ('Pulau ' + pulauNo);
+    var desc = pulau.deskripsi_pulau || 'Jelajahi pulau ini untuk menguji pengetahuanmu';
+    var status = isCompleted ? '✓ SELESAI' : 'Klik untuk bermain';
+    
+    card.innerHTML = 
+      '<div style="font-family:var(--F1); font-size:16px; ' + 
+      'color:' + (isCompleted ? 'var(--green)' : 'var(--cyan)') + '; margin-bottom:6px;">' + title + '</div>' +
+      '<div style="font-family:var(--F3); font-size:12px; color:rgba(210,195,235,0.65); line-height:1.5;">' + desc + '</div>' +
+      '<div style="font-family:var(--F2); font-size:10px; letter-spacing:1px; color:' + 
+      (isCompleted ? 'var(--green)' : 'rgba(0,229,255,0.5)') + '; margin-top:8px;">' + status + '</div>';
+    
+    card.onclick = function() {
+      if (G.completedIslands === undefined) G.completedIslands = [];
+      G.pulauIdx = idx;
+      gotoIsland(idx, 'prolog');
+    };
+    
+    card.onmouseover = function() {
+      card.style.background = isCompleted ? 'rgba(57,255,20,0.15)' : 'rgba(0,229,255,0.15)';
+      card.style.boxShadow = '0 0 16px rgba(' + (isCompleted ? '57,255,20' : '0,229,255') + ',0.2)';
+    };
+    card.onmouseout = function() {
+      card.style.background = isCompleted ? 'rgba(57,255,20,0.1)' : 'rgba(0,229,255,0.1)';
+      card.style.boxShadow = 'none';
+    };
+    
+    islandListEl.appendChild(card);
+  });
+  
+  showScreen('sIslandSelect');
+}
+
+
 function gotoIsland(idx, phase) {
   G.pulauIdx = idx;
   var p = D.pulau[idx];
@@ -1184,6 +1261,86 @@ function showIslandStoryDirect(pulauIdx, phase) {
   showIslandStory(pulauIdx, phase);
 }
 
+// ════════════════════════════════════════════
+//  ISLAND STATISTICS SCREEN
+// ════════════════════════════════════════════
+function showIslandStats(pulauIdx, callback) {
+  var pulau = D.pulau[pulauIdx];
+  var pulauNo = getPulauNo(pulau);
+  
+  // Buat overlay statistik
+  var statsOverlay = document.createElement('div');
+  statsOverlay.id = 'islandStatsOverlay';
+  statsOverlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); ' +
+    'display:flex; align-items:center; justify-content:center; z-index:9999; animation:fadeIn 0.4s;';
+  
+  var statsBox = document.createElement('div');
+  statsBox.style.cssText = 'background:linear-gradient(135deg,rgba(5,37,60,0.98),rgba(8,15,35,0.98)); ' +
+    'border:2px solid rgba(0,229,255,0.4); border-radius:20px; padding:30px; ' +
+    'width:min(450px,90vw); box-shadow:0 8px 48px rgba(0,0,0,0.7); text-align:center; ' +
+    'backdrop-filter:blur(16px);';
+  
+  var diamondsEarned = G.diamonds;    // Tampilkan total yang sudah terkumpul dari kuis
+  var fragmentsEarned = G.fragments;  // Jangan tambah lagi secara random
+
+  // Tidak menambah G.diamonds/G.fragments di sini — sudah ditangani oleh sistem kuis
+  
+  statsBox.innerHTML = 
+    '<div style="font-family:var(--F1); font-size:32px; color:var(--green); ' +
+    'text-shadow:0 0 20px var(--green); margin-bottom:20px;">🏆 PULAU DISELESAIKAN!</div>' +
+    
+    '<div style="font-family:var(--F3); font-size:18px; color:var(--cyan); margin-bottom:24px;">' +
+    'PULAU ' + pulauNo + ' — ' + (pulau.nama_pulau || '') + '</div>' +
+    
+    '<div style="background:rgba(57,255,20,0.12); border:1px solid rgba(57,255,20,0.35); ' +
+    'border-radius:14px; padding:18px; margin-bottom:20px; display:flex; ' +
+    'flex-direction:column; gap:12px;">' +
+    '<div style="font-family:var(--F2); font-size:11px; color:var(--green); ' +
+    'letter-spacing:2px; margin-bottom:8px;">TOTAL PEROLEHAN</div>' +
+    '<div style="display:flex; justify-content:space-around; gap:10px;">' +
+    '<div style="text-align:center;">' +
+    '<div style="font-family:var(--F2); font-size:22px; color:var(--gold); ' +
+    'text-shadow:0 0 10px var(--gold);">' + diamondsEarned + ' 💎</div>' +
+    '<div style="font-family:var(--F3); font-size:10px; color:rgba(200,190,220,0.6); margin-top:4px;">Total Diamonds</div>' +
+    '</div>' +
+    '<div style="text-align:center;">' +
+    '<div style="font-family:var(--F2); font-size:22px; color:var(--cyan); ' +
+    'text-shadow:0 0 10px var(--cyan);">' + fragmentsEarned + ' 🔷</div>' +
+    '<div style="font-family:var(--F3); font-size:10px; color:rgba(200,190,220,0.6); margin-top:4px;">Total Fragments</div>' +
+    '</div>' +
+    '</div>' +
+    '</div>' +
+    
+    '<button id="btnStatsNext" style="width:100%; padding:14px; border-radius:12px; ' +
+    'background:linear-gradient(135deg,rgba(0,150,220,0.35),rgba(0,80,180,0.3)); ' +
+    'border:1.5px solid rgba(0,229,255,0.55); color:var(--cyan); ' +
+    'font-family:var(--F2); font-size:12px; letter-spacing:2px; font-weight:700; ' +
+    'cursor:pointer; transition:all 0.2s; ' +
+    'box-shadow:0 0 18px rgba(0,150,220,0.25);">' +
+    'LANJUT</button>';
+  
+  statsOverlay.appendChild(statsBox);
+  document.body.appendChild(statsOverlay);
+  
+  var btnStatsNext = document.getElementById('btnStatsNext');
+  btnStatsNext.onmouseover = function() {
+    statsBox.style.boxShadow = '0 0 32px rgba(0,229,255,0.3), 0 8px 48px rgba(0,0,0,0.7)';
+  };
+  btnStatsNext.onmouseout = function() {
+    statsBox.style.boxShadow = '0 8px 48px rgba(0,0,0,0.7)';
+  };
+  btnStatsNext.onclick = function() {
+    statsOverlay.style.animation = 'fadeOut 0.3s forwards';
+    setTimeout(function() {
+      if (statsOverlay.parentNode) statsOverlay.parentNode.removeChild(statsOverlay);
+      if (callback) callback();
+    }, 300);
+  };
+}
+
+// ════════════════════════════════════════════
+//  ISLAND STORY (prolog / epilog per pulau)
+// ════════════════════════════════════════════
 function showIslandStory(pulauIdx, phase) {
   G.pulauIdx = pulauIdx;
   var pulau  = D.pulau[pulauIdx];
@@ -1222,10 +1379,24 @@ function showIslandStory(pulauIdx, phase) {
     if (ph === 'awal') {
       showMateri(idx);
     } else {
-      // Tampilkan animasi island clear dulu, baru lanjut ke pulau berikutnya
-      var pulauNo = getPulauNo(D.pulau[idx]);
-      showIslandClear(pulauNo, function() {
-        gotoIsland(idx + 1, 'prolog');
+      // Tampilkan statistik pulau sebelum island clear animation
+      showIslandStats(idx, function() {
+        var pulauNo = getPulauNo(D.pulau[idx]);
+        showIslandClear(pulauNo, function() {
+          // Tambah pulau ke completed islands
+          if (!G.completedIslands) G.completedIslands = [];
+          if (G.completedIslands.indexOf(idx) === -1) {
+            G.completedIslands.push(idx);
+          }
+          // Cek apakah ada pulau selanjutnya
+          var nextIdx = idx + 1;
+          var nextPulau = D.pulau[nextIdx];
+          if (!nextPulau) {
+            showEndGame();
+          } else {
+            showIslandSelectScreen(); // Kembali ke pemilihan pulau
+          }
+        });
       });
     }
   };
@@ -1492,7 +1663,7 @@ function monsterTurn() {
   var roll = Math.random();
   var dmg, name, aKey;
   if (roll < .48) {
-    dmg=Math.floor(m.damage_skil1*.72); name='SERANG BIASA'; aKey='animasi_serang';
+    dmg=Math.floor(m.damage_skil1*.55); name='SERANG BIASA'; aKey='animasi_serang';
   } else if (roll < .74) {
     dmg=m.damage_skil1; name='SKILL 1'; aKey='animasi_skil1';
   } else if (roll < .91) {
@@ -1799,6 +1970,7 @@ function showEndGame() {
     G.fragments = 0;
     G.heroName  = '';
     G.heroImgLocal = null;
+    G.completedIslands = [];
     setupCover();
     showScreen('sCover');
   };
@@ -2097,7 +2269,7 @@ function ttsStop() {
     var lbl = document.getElementById(_ttsActive.lblId);
     if (btn) btn.classList.remove('tts-playing');
     if (_ttsActive.btnId === 'btnTtsStory') {
-      if (lbl) lbl.textContent = '🔇 MUTE';
+      if (lbl) lbl.textContent = '🔊 DENGARKAN';
     } else {
       if (lbl) lbl.textContent = 'DENGARKAN MATERI';
     }

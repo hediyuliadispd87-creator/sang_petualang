@@ -118,6 +118,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;
   animation:ttsPulse 1.4s ease-in-out infinite}
 @keyframes ttsPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.4)}60%{box-shadow:0 0 0 6px rgba(255,215,0,0)}}
 .tts-icon{font-size:14px;line-height:1}
+
+/* ── VIDEO PLAYER ── */
+#sEnding{justify-content:center;padding:20px}
+.ending-box{position:relative;width:min(600px,95vw);background:var(--glassMid);
+  border:1.5px solid rgba(255,215,0,.28);border-radius:18px;padding:28px 24px;
+  backdrop-filter:blur(16px);box-shadow:0 8px 50px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;align-items:center;gap:20px}
+.ending-title{font-family:var(--F1);font-size:clamp(20px,5vw,32px);
+  color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.5);text-align:center}
+.video-container{width:100%;max-width:550px;aspect-ratio:16/9;
+  background:rgba(0,0,0,.6);border-radius:12px;overflow:hidden;
+  border:1.5px solid rgba(255,215,0,.25);box-shadow:0 0 24px rgba(255,215,0,.2)}
+.video-container video{width:100%;height:100%;object-fit:contain}
+.ending-text{font-family:var(--F3);font-size:15px;line-height:1.7;
+  color:#cec4e0;text-align:center;margin-top:8px}
+.btn-restart{padding:14px 48px;border-radius:50px;
+  background:linear-gradient(135deg,#5a0e9e,#8a28e0);
+  border:1.5px solid rgba(255,215,0,.55);color:var(--gold);
+  font-family:var(--F2);font-size:12px;letter-spacing:2px;font-weight:700;
+  box-shadow:0 0 22px rgba(130,40,224,.55);transition:box-shadow .2s,transform .15s;
+  margin-top:16px}
+.btn-restart:active{transform:scale(.95)}
+.btn-restart:hover{box-shadow:0 0 38px rgba(130,40,224,.85)}
 .btn-tts-materi{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
   border-radius:30px;background:transparent;border:1px solid rgba(0,229,255,.38);
   color:rgba(0,229,255,.7);font-family:var(--F2);font-size:9px;letter-spacing:1.5px;
@@ -823,6 +846,31 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;
   <button class="btnResult btnRetry" id="btnRetry" style="margin-top:8px">↺ COBA LAGI</button>
 </div>
 
+<!-- ══ ENDING / TAMAT ══ -->
+<div id="sEnding" class="screen">
+  <div class="ending-box">
+    <div class="ending-title">🎬 TAMAT</div>
+    <div class="video-container" style="position:relative">
+      <video id="endingVideoPlayer" controls preload="auto">
+        <source src="" type="video/mp4">
+        Browser Anda tidak mendukung video player
+      </video>
+      <div id="videoLoadingHint" style="position:absolute;inset:0;
+        display:flex;align-items:center;justify-content:center;
+        background:rgba(0,0,0,0.6);border-radius:12px;
+        font-family:var(--F2);font-size:11px;letter-spacing:2px;
+        color:rgba(255,215,0,0.8);flex-direction:column;gap:10px;z-index:5;">
+        <div style="font-size:28px;animation:spin 1.5s linear infinite">⏳</div>
+        <div>MEMUAT VIDEO...</div>
+      </div>
+    </div>
+    <div class="ending-text" id="endingText">
+      Terima kasih telah menyelesaikan petualangan! <br>Video penutup sedang dimuat...
+    </div>
+    <button class="btn-restart" id="btnRestartGame">◀ KEMBALI KE AWAL</button>
+  </div>
+</div>
+
 <!-- ══ AFTER MONSTER CHOICE POPUP ══ -->
 <div id="afterMonsterPopup">
   <div class="ampSheet">
@@ -979,6 +1027,14 @@ window.addEventListener('load', function() {
     prog(65, 'Menyiapkan hero...');
     loadImg('', D.hero.gambar_hero, function(src) {
       G.heroImgSrc = src;
+      prog(90, 'Menyiapkan video ending...');
+      // Preload video ending sejak dini agar tidak lama saat TAMAT
+      if (D.intro && D.intro.video_ending) {
+        preloadEndingVideo(D.intro.video_ending);
+      } else {
+        // Preload dari URL hardcoded yang ada di kode showEnding
+        preloadEndingVideo('https://www.dropbox.com/scl/fi/o2igkg57hx0vg0hlvwval/Menambahkan_Animasi_Ledakan_ke_Video.mp4?rlkey=zrq5g56vbjuex0jdmir820g2h&st=1i5gf465&dl=0');
+      }
       prog(100, 'SIAP!');
       setTimeout(function() {
         setupCover();
@@ -1392,7 +1448,10 @@ function showIslandStory(pulauIdx, phase) {
           var nextIdx = idx + 1;
           var nextPulau = D.pulau[nextIdx];
           if (!nextPulau) {
-            showEndGame();
+            showEnding(
+              'https://www.dropbox.com/scl/fi/o2igkg57hx0vg0hlvwval/Menambahkan_Animasi_Ledakan_ke_Video.mp4?rlkey=zrq5g56vbjuex0jdmir820g2h&st=1i5gf465&dl=0',
+              'Selamat! Kamu telah menaklukkan semua pulau! 🏆\nTotal Diamond: 💎 ' + G.diamonds + '  Fragmen: 🔷 ' + G.fragments
+            );
           } else {
             showIslandSelectScreen(); // Kembali ke pemilihan pulau
           }
@@ -2307,6 +2366,107 @@ function prog(pct, msg) {
   document.getElementById('progFill').style.width = pct + '%';
   if (msg) document.getElementById('progTxt').textContent = msg;
 }
+
+// ════════════════════════════════════════════
+//  VIDEO PLAYER UNTUK DROPBOX (dengan PRELOAD)
+// ════════════════════════════════════════════
+
+var _endingVideoReady = false;
+var _endingVideoUrl   = '';
+
+// Helper: konversi URL Dropbox ke direct link
+function toDropboxDirect(url) {
+  if (!url) return '';
+  var u = url;
+  if (u.indexOf('dropbox.com') !== -1) {
+    u = u.replace('?dl=0', '?dl=1').replace('dl=0', 'dl=1');
+    if (u.indexOf('dl=1') === -1) {
+      u += (u.indexOf('?') !== -1 ? '&' : '?') + 'dl=1';
+    }
+  }
+  return u;
+}
+
+// Panggil SEDINI MUNGKIN untuk mulai buffer video
+function preloadEndingVideo(dropboxUrl) {
+  if (!dropboxUrl) return;
+  var videoUrl = toDropboxDirect(dropboxUrl);
+  _endingVideoUrl = videoUrl;
+  _endingVideoReady = false;
+
+  var vp = document.getElementById('endingVideoPlayer');
+  if (!vp) return;
+
+  vp.src      = videoUrl;
+  vp.preload  = 'auto';
+  vp.load();
+
+  // Tandai siap ketika sudah cukup ter-buffer
+  vp.addEventListener('canplay', function onCanPlay() {
+    _endingVideoReady = true;
+    vp.removeEventListener('canplay', onCanPlay);
+  });
+}
+
+// Panggil ketika halaman dimulai
+window.addEventListener('DOMContentLoaded', function() {
+  // Event listener untuk tombol kembali di ending screen
+  var btnRestart = document.getElementById('btnRestartGame');
+  if (btnRestart) {
+    btnRestart.addEventListener('click', function() {
+      location.reload();
+    });
+  }
+});
+
+// Fungsi untuk menampilkan ending screen dengan video
+function showEnding(dropboxVideoUrl, endingText) {
+  if (endingText) {
+    var endingTextEl = document.getElementById('endingText');
+    if (endingTextEl) endingTextEl.textContent = endingText;
+  }
+
+  var vp = document.getElementById('endingVideoPlayer');
+
+  // Jika URL berbeda dari yang sudah di-preload, set ulang
+  var targetUrl = toDropboxDirect(dropboxVideoUrl);
+  if (vp && vp.src !== targetUrl) {
+    vp.src     = targetUrl;
+    vp.preload = 'auto';
+    vp.load();
+  }
+
+  showScreen('sEnding');
+
+  // Tampilkan indikator loading jika video belum siap
+  var loadingHint = document.getElementById('videoLoadingHint');
+  if (loadingHint) loadingHint.style.display = '';
+
+  if (vp) {
+    var tryPlay = function() {
+      if (loadingHint) loadingHint.style.display = 'none';
+      vp.play().catch(function() {});
+    };
+
+    if (_endingVideoReady || vp.readyState >= 3) {
+      // Video sudah siap, langsung play
+      tryPlay();
+    } else {
+      // Tunggu sampai bisa diputar
+      vp.addEventListener('canplay', function onReady() {
+        vp.removeEventListener('canplay', onReady);
+        tryPlay();
+      });
+      // Fallback: coba play setelah 2 detik meski belum canplay
+      setTimeout(function() {
+        if (vp.paused) {
+          if (loadingHint) loadingHint.style.display = 'none';
+          vp.play().catch(function() {});
+        }
+      }, 2000);
+    }
+  }
+}
 </script>
 </body>
-</html>
+</html>`

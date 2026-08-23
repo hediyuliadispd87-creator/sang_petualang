@@ -263,9 +263,76 @@
         .bHP{background:linear-gradient(90deg,#ff2828,#ff6060)}
         .bHPHero{background:linear-gradient(90deg,#28d028,#7ef07e)}
         .bMP{background:linear-gradient(90deg,#1155ff,#44aaff)}
+        .bMPHero{background:linear-gradient(90deg,#9b30ff,#4488ff);box-shadow:0 0 6px rgba(155,48,255,.65)}
         .barVal{font-family:var(--F2);font-size:7.5px;color:rgba(255,255,255,.45)}
         .charFloat{position:absolute;z-index:15;cursor:pointer;transition:transform .18s,filter .18s}
         .charFloat:active{transform:scale(.93)}
+        /* ── HEAL GLOW (Skill 1) — makin kuat seiring level upgrade skill (--lvl) ── */
+        .charFloat.healGlow{animation:healGlowPulse .9s ease-in-out 2;z-index:20}
+        .charFloat.healGlow img{animation:healGlowImg .9s ease-in-out 2}
+        @keyframes healGlowPulse{
+          0%{filter:drop-shadow(0 0 0 rgba(57,255,20,0)) drop-shadow(0 0 0 rgba(255,215,0,0))}
+          40%{filter:drop-shadow(0 0 calc(26px * var(--lvl,1)) rgba(57,255,20,.95)) drop-shadow(0 0 calc(42px * var(--lvl,1)) rgba(255,215,0,.85)) drop-shadow(0 0 calc(60px * var(--lvl,1)) rgba(120,255,80,.5)) brightness(calc(1.5 + .06 * var(--lvl,1))) saturate(1.4)}
+          70%{filter:drop-shadow(0 0 calc(18px * var(--lvl,1)) rgba(255,215,0,.9)) drop-shadow(0 0 calc(30px * var(--lvl,1)) rgba(57,255,20,.7)) brightness(calc(1.25 + .04 * var(--lvl,1)))}
+          100%{filter:drop-shadow(0 0 0 rgba(57,255,20,0)) drop-shadow(0 0 0 rgba(255,215,0,0)) brightness(1)}
+        }
+        @keyframes healGlowImg{
+          0%,100%{transform:translateY(0) scale(1)}
+          45%{transform:translateY(calc(-8px * var(--lvl,1))) scale(calc(1.06 + .02 * var(--lvl,1)))}
+        }
+        .healSpark{position:absolute;z-index:16;pointer-events:none;font-size:18px;
+          text-shadow:0 0 10px rgba(57,255,20,.8),0 0 18px rgba(255,215,0,.6);
+          animation:healSparkRise 1.1s ease-out forwards}
+        @keyframes healSparkRise{
+          0%{opacity:0;transform:translate(0,0) scale(.5)}
+          15%{opacity:1}
+          100%{opacity:0;transform:translate(var(--sx,0),-70px) scale(1.2)}
+        }
+        .healRing{position:absolute;z-index:14;pointer-events:none;border-radius:50%;
+          border:3px solid rgba(57,255,20,.85);box-shadow:0 0 18px rgba(255,215,0,.8);
+          animation:healRingExpand .8s ease-out forwards}
+        @keyframes healRingExpand{
+          0%{opacity:.95;transform:translate(-50%,-50%) scale(.05)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+        }
+        /* ── FIRE BURN (Skill 2) — makin besar & ganas seiring level upgrade skill (--lvl) ── */
+        .charFloat.burnFx{animation:burnFlicker 1.3s ease-in-out 2;z-index:20}
+        .charFloat.burnFx img{animation:burnShake .45s ease-in-out 5}
+        @keyframes burnFlicker{
+          0%{filter:drop-shadow(0 0 0 rgba(255,120,0,0)) drop-shadow(0 0 0 rgba(255,0,0,0))}
+          30%{filter:drop-shadow(0 0 calc(40px * var(--lvl,1)) rgba(255,140,0,1)) drop-shadow(0 0 calc(75px * var(--lvl,1)) rgba(255,20,0,.95)) drop-shadow(0 0 calc(110px * var(--lvl,1)) rgba(255,60,0,.6)) brightness(calc(1.55 + .08 * var(--lvl,1))) saturate(1.9)}
+          55%{filter:drop-shadow(0 0 calc(26px * var(--lvl,1)) rgba(255,190,0,.9)) drop-shadow(0 0 calc(50px * var(--lvl,1)) rgba(255,70,0,.8)) drop-shadow(0 0 calc(80px * var(--lvl,1)) rgba(255,30,0,.5)) brightness(calc(1.3 + .05 * var(--lvl,1)))}
+          100%{filter:drop-shadow(0 0 0 rgba(255,120,0,0)) drop-shadow(0 0 0 rgba(255,0,0,0)) brightness(1)}
+        }
+        @keyframes burnShake{
+          0%,100%{transform:translateX(0) rotate(0)}
+          25%{transform:translateX(calc(-7px * var(--lvl,1))) rotate(calc(-2.5deg * var(--lvl,1)))}
+          75%{transform:translateX(calc(7px * var(--lvl,1))) rotate(calc(2.5deg * var(--lvl,1)))}
+        }
+        .flameSpark{position:absolute;z-index:21;pointer-events:none;font-size:34px;
+          text-shadow:0 0 14px rgba(255,120,0,.9),0 0 26px rgba(255,40,0,.7);
+          animation:flameRise 1.2s ease-out forwards}
+        @keyframes flameRise{
+          0%{opacity:0;transform:translate(0,16px) scale(.4)}
+          15%{opacity:1}
+          100%{opacity:0;transform:translate(var(--sx,0),-110px) scale(1.9)}
+        }
+        .burnGround{position:absolute;z-index:13;pointer-events:none;border-radius:50%;
+          background:radial-gradient(circle,rgba(255,150,0,.7) 0%,rgba(255,60,0,.4) 40%,rgba(255,20,0,.15) 65%,transparent 78%);
+          animation:burnGroundPulse 1.3s ease-out forwards}
+        @keyframes burnGroundPulse{
+          0%{opacity:0;transform:translate(-50%,-50%) scale(.05)}
+          25%{opacity:1}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+        }
+        .burnOverlay{position:absolute;z-index:19;pointer-events:none;border-radius:50%;
+          background:radial-gradient(circle,rgba(255,160,0,.55) 0%,rgba(255,60,0,.35) 45%,transparent 72%);
+          mix-blend-mode:screen;animation:burnOverlayPulse 1.3s ease-out forwards}
+        @keyframes burnOverlayPulse{
+          0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+          30%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(1.4)}
+        }
         #heroFloat{bottom:27%;left:6%}
         #monFloat{bottom:27%;right:6%}
         .charFloat img{width:clamp(76px,19vw,138px);height:clamp(76px,19vw,138px);object-fit:contain}
@@ -319,6 +386,68 @@
           0%{opacity:1;transform:translateY(0) scale(1)}
           25%{transform:translateY(-28px) scale(1.22)}
           100%{opacity:0;transform:translateY(-75px) scale(.8)}}
+
+        /* ── ULTIMATE — EFEK EKSTREM ── */
+        #sBattle.screenShake{animation:ultiScreenShake .5s ease-in-out}
+        @keyframes ultiScreenShake{
+          0%,100%{transform:translate(0,0)}
+          10%{transform:translate(calc(-7px * var(--lvl,1)),calc(3px * var(--lvl,1)))}
+          20%{transform:translate(calc(7px * var(--lvl,1)),calc(-5px * var(--lvl,1)))}
+          30%{transform:translate(calc(-9px * var(--lvl,1)),calc(3px * var(--lvl,1)))}
+          40%{transform:translate(calc(8px * var(--lvl,1)),calc(4px * var(--lvl,1)))}
+          50%{transform:translate(calc(-6px * var(--lvl,1)),calc(-4px * var(--lvl,1)))}
+          60%{transform:translate(calc(5px * var(--lvl,1)),calc(5px * var(--lvl,1)))}
+          70%{transform:translate(calc(-4px * var(--lvl,1)),calc(-2px * var(--lvl,1)))}
+          80%{transform:translate(calc(3px * var(--lvl,1)),calc(2px * var(--lvl,1)))}
+          90%{transform:translate(calc(-2px * var(--lvl,1)),calc(1px * var(--lvl,1)))}}
+        .ultiFlashOverlay{position:absolute;inset:0;z-index:997;pointer-events:none;
+          background:radial-gradient(circle at 50% 45%,rgba(255,250,210,.96) 0%,
+            rgba(255,215,0,.6) 32%,rgba(255,165,0,.18) 55%,rgba(255,165,0,0) 75%);
+          animation:ultiFlashFade .6s ease-out forwards;mix-blend-mode:screen}
+        @keyframes ultiFlashFade{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+        .ultiVignette{position:absolute;inset:0;z-index:996;pointer-events:none;
+          box-shadow:inset 0 0 0 0 rgba(255,215,0,0);
+          animation:ultiVignettePulse .65s ease-out forwards}
+        @keyframes ultiVignettePulse{
+          0%{box-shadow:inset 0 0 0 0 rgba(255,215,0,0)}
+          20%{box-shadow:inset 0 0 60px 18px rgba(255,215,0,.55)}
+          100%{box-shadow:inset 0 0 140px 60px rgba(255,215,0,0)}}
+        .ultiBeam{position:absolute;pointer-events:none;z-index:66;height:3px;
+          border-radius:3px;left:0;top:0;
+          background:linear-gradient(90deg,rgba(255,235,150,0) 0%,#FFD700 42%,
+            #fffbe0 50%,#FFD700 58%,rgba(255,235,150,0) 100%);
+          box-shadow:0 0 16px 3px rgba(255,215,0,.85);
+          transform-origin:0 50%;animation:ultiBeamFade .5s ease-out forwards}
+        @keyframes ultiBeamFade{
+          0%{opacity:0;transform:rotate(var(--ang)) scaleX(0)}
+          25%{opacity:1;transform:rotate(var(--ang)) scaleX(1)}
+          100%{opacity:0;transform:rotate(var(--ang)) scaleX(1)}}
+        .ultiProjectile{position:absolute;pointer-events:none;z-index:999;
+          font-size:clamp(24px,6vw,38px);
+          filter:drop-shadow(0 0 10px #FFD700) drop-shadow(0 0 22px #FFA500)
+            drop-shadow(0 0 34px #fffbe0);will-change:transform,opacity}
+        @keyframes ultiConverge{
+          0%{opacity:0;transform:translate(0,0) scale(.25) rotate(0deg)}
+          14%{opacity:1;transform:translate(calc(var(--tx)*.1),calc(var(--ty)*.1)) scale(1.2) rotate(140deg)}
+          85%{opacity:1}
+          100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.55) rotate(520deg)}}
+        .ultiBurstRing{position:absolute;pointer-events:none;z-index:68;
+          width:26px;height:26px;border-radius:50%;
+          border:3px solid rgba(255,235,150,.95);
+          box-shadow:0 0 20px 6px rgba(255,190,20,.7);
+          animation:ultiRingExpand .75s ease-out forwards}
+        @keyframes ultiRingExpand{
+          0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(9)}}
+        .ultiCore{position:absolute;pointer-events:none;z-index:69;
+          width:34px;height:34px;border-radius:50%;
+          background:radial-gradient(circle,#fffbe0 0%,#FFD700 40%,rgba(255,165,0,0) 75%);
+          filter:drop-shadow(0 0 26px #FFD700);
+          animation:ultiCorePop .65s ease-out forwards}
+        @keyframes ultiCorePop{
+          0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+          30%{opacity:1;transform:translate(-50%,-50%) scale(1.9)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
         #battleLog{position:absolute;bottom:115px;left:50%;transform:translateX(-50%);
           width:min(340px,82vw);z-index:22;pointer-events:none;
           display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -395,6 +524,68 @@
         .dhDivider{width:1px;height:16px;background:rgba(255,255,255,.12)}
         .dhDiamonds{font-family:var(--F2);font-size:9.5px;color:var(--gold);
           display:flex;align-items:center;gap:3px}
+
+        /* ── POIN HUD (poin serangan) ── */
+        #poinHUD{position:absolute;top:10px;left:12px;z-index:28;
+          display:flex;align-items:center;gap:5px;
+          background:rgba(8,8,22,.82);border:1px solid rgba(0,229,255,.35);
+          border-radius:20px;padding:5px 12px;backdrop-filter:blur(8px);
+          font-family:var(--F2);font-size:10px;color:var(--cyan);
+          text-shadow:0 0 8px rgba(0,229,255,.6)}
+        #poinHUD .poinIcon{font-size:12px}
+        @keyframes poinPop{0%{transform:scale(1)}30%{transform:scale(1.35)}100%{transform:scale(1)}}
+        #poinHUD.pop{animation:poinPop .32s ease-out}
+
+        /* ── MENU / SHOP BUTTON ── */
+        #btnMenuShop{position:absolute;top:9px;right:12px;z-index:29;
+          width:34px;height:34px;border-radius:50%;
+          background:rgba(8,8,22,.82);border:1px solid rgba(255,215,0,.4);
+          display:flex;align-items:center;justify-content:center;
+          font-size:16px;color:var(--gold);backdrop-filter:blur(8px);
+          box-shadow:0 0 12px rgba(255,215,0,.25);transition:transform .15s}
+        #btnMenuShop:active{transform:scale(.88)}
+
+        /* ── SHOP MODAL ── */
+        #shopModal{position:fixed;inset:0;z-index:112;display:none;
+          align-items:flex-end;justify-content:center;
+          background:rgba(4,4,14,.8);backdrop-filter:blur(6px);padding:0}
+        #shopModal.show{display:flex}
+        .shopSheet{width:min(480px,100vw);max-height:88vh;overflow-y:auto;
+          background:var(--glassMid);border:1px solid rgba(255,215,0,.28);
+          border-radius:22px 22px 0 0;padding:0 0 22px;backdrop-filter:blur(18px);
+          box-shadow:0 -10px 48px rgba(0,0,0,.6);animation:sheetUp .28s cubic-bezier(.34,1.56,.64,1)}
+        .shopHead{padding:16px 20px 12px;border-bottom:1px solid rgba(255,215,0,.14);
+          display:flex;align-items:center;justify-content:space-between}
+        .shopTitle{font-family:var(--F1);font-size:18px;color:var(--gold);
+          text-shadow:0 0 14px rgba(255,215,0,.45)}
+        .shopPoin{font-family:var(--F2);font-size:11px;color:var(--cyan);
+          background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.35);
+          border-radius:20px;padding:5px 12px;display:flex;align-items:center;gap:5px}
+        .shopList{padding:12px 16px 0;display:flex;flex-direction:column;gap:10px}
+        .shopItem{display:flex;align-items:center;gap:12px;
+          background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
+          border-radius:12px;padding:11px 13px}
+        .shopIcon{width:42px;height:42px;border-radius:10px;flex-shrink:0;
+          background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);
+          display:flex;align-items:center;justify-content:center;font-size:21px}
+        .shopInfo{flex:1;min-width:0}
+        .shopName{font-family:var(--F3);font-weight:600;font-size:13.5px;color:#f0e8ff}
+        .shopDesc{font-family:var(--F3);font-size:11px;color:rgba(200,190,220,.6);margin-top:1px}
+        .shopLvl{font-family:var(--F2);font-size:8px;letter-spacing:1px;color:var(--gold2);
+          margin-top:3px}
+        .shopBuyBtn{flex-shrink:0;padding:9px 14px;border-radius:10px;
+          background:linear-gradient(135deg,#5a0e9e,#8a28e0);
+          border:1px solid rgba(255,215,0,.5);color:var(--gold);
+          font-family:var(--F2);font-size:10px;letter-spacing:.5px;font-weight:700;
+          display:flex;flex-direction:column;align-items:center;gap:2px;
+          transition:transform .14s,opacity .14s}
+        .shopBuyBtn:active:not(:disabled){transform:scale(.92)}
+        .shopBuyBtn:disabled{opacity:.35;filter:grayscale(.5)}
+        .shopBuyBtn .sbPrice{display:flex;align-items:center;gap:3px;font-size:10.5px}
+        .btnCloseShop{display:block;margin:16px auto 0;padding:10px 44px;
+          background:rgba(255,50,50,.12);border:1px solid rgba(255,50,50,.28);border-radius:30px;
+          color:var(--red);font-family:var(--F2);font-size:9.5px;letter-spacing:2px}
+        .btnCloseShop:active{transform:scale(.95)}
         
         /* ── QUIZ MODAL ── */
         #quizModal{position:fixed;inset:0;z-index:110;display:none;
@@ -773,11 +964,15 @@
         <div class="dhDivider"></div>
         <div class="dhDiamonds">💎 <span id="dhDiamondCount">0</span></div>
     </div>
+    <div id="poinHUD"><span class="poinIcon">⚡</span> <span id="poinCount">0</span> POIN</div>
+    <button id="btnMenuShop" onclick="openShop()">☰</button>
     <div id="hudTop">
         <div class="hCard hHero">
             <div class="hCardName gold">⚔ <span id="hudHeroName">HERO</span> <span class="lvBadge">LV.1</span></div>
             <div class="barWrap"><div class="barFill bHPHero" id="heroHPBar" style="width:100%"></div></div>
             <div class="barVal"><span id="heroHPVal">100</span>/<span id="heroHPMax">100</span> HP</div>
+            <div class="barWrap"><div class="barFill bMPHero" id="heroMPBar" style="width:100%"></div></div>
+            <div class="barVal"><span id="heroMPVal">100</span>/<span id="heroMPMax">100</span> MP</div>
         </div>
         <div class="hCard hMon">
             <div class="hCardName red">
@@ -814,7 +1009,7 @@
                 </svg>
                 <span class="cdNum" id="cdNumS1">0</span>
             </div>
-            <span class="sIcon">💫</span><span class="sLabel">SKILL 1</span>
+            <span class="sIcon">💚</span><span class="sLabel">SKILL 1</span>
         </button>
         <button class="sBtn sBtnAtk" id="btnAtk" onclick="useSkill('atk')">
             <span class="sIcon" style="font-size:28px">⚔</span>
@@ -836,7 +1031,7 @@
                 </svg>
                 <span class="cdNum" id="cdNumS2">0</span>
             </div>
-            <span class="sIcon">⚡</span><span class="sLabel">SKILL 2</span>
+            <span class="sIcon">🔥</span><span class="sLabel">SKILL 2</span>
         </button>
     </div>
 </div>
@@ -874,6 +1069,19 @@
         </div>
         <div class="sheetBody" id="infoBody"></div>
         <button class="btnCloseSheet" onclick="document.getElementById('infoPopup').classList.remove('show')">✕ TUTUP</button>
+    </div>
+</div>
+
+<!-- ══ SHOP / MENU MODAL ══ -->
+<div id="shopModal" onclick="closeShopOutside(event)">
+    <div class="shopSheet" onclick="event.stopPropagation()">
+        <div class="sheetHandle"></div>
+        <div class="shopHead">
+            <div class="shopTitle">🛒 TOKO</div>
+            <div class="shopPoin">⚡ <span id="shopPoinCount">0</span> POIN</div>
+        </div>
+        <div class="shopList" id="shopList"></div>
+        <button class="btnCloseShop" onclick="closeShop()">✕ TUTUP</button>
     </div>
 </div>
 
@@ -967,7 +1175,7 @@
     <div class="icl-stars" id="iclStars"></div>
     <div class="icl-badge" id="iclBadge">PULAU 1<br>DISELESAIKAN!</div>
     <div class="icl-sub">✦ LANJUT KE PETUALANGAN BERIKUTNYA ✦</div>
-    <div class="icl-diamonds">💎 <span id="iclDiamond">0</span> &nbsp;🔷 <span id="iclFrag">0</span>/5</div>
+    <div class="icl-diamonds">💎 <span id="iclDiamond">0</span> &nbsp;🔷 <span id="iclFrag">0</span>/5 &nbsp;⚡ <span id="iclPoin">0</span> POIN</div>
 </div>
 
 <div id="toastBox"></div>
@@ -1004,7 +1212,7 @@
       monWaveIdx: 0,
       monstersNow: [],
     
-      hero: { hp:100, maxHp:100, dmgAtk:10, dmgS1:15, dmgS2:20, dmgUlti:40 },
+      hero: { hp:100, maxHp:100, mp:100, maxMp:100, dmgAtk:10, dmgS1:15, dmgS2:20, dmgUlti:40 },
       mon : { hp:50, maxHp:50, mp:30, dmgS1:8, dmgS2:12, dmgUlti:25, spd:5, data:null },
     
       heroName     : '',
@@ -1026,6 +1234,11 @@
       diamonds  : 0,
       fragments : 0,
       completedIslands : [],
+
+      // ── Poin serangan (untuk belanja di Toko) ──
+      battlePoin    : 0,   // akumulasi poin dari menyerang, dipakai belanja & dikirim ke sheet
+      pointsThisFight: 0,  // poin yang terkumpul selama melawan monster saat ini (dilipatgandakan saat menang)
+      upgLevel      : { atk:0, skill:0, ulti:0 }, // level upgrade permanen sesi ini
     
       iqQuestions : [],
       iqIdx       : 0,
@@ -1311,18 +1524,241 @@
       if (!G.heroName) return;       // Belum ada hero -> tidak perlu direkam
       G.poinSaved = true;
 
-      var totalPoin    = (G.diamonds || 0) * 5 + (G.fragments || 0);
+      // totalPoin sekarang menggabungkan hadiah kuis (diamond/fragment)
+      // DAN poin serangan yang terkumpul selama bertarung (G.battlePoin,
+      // yang sudah memperhitungkan poin yang dibelanjakan di Toko).
+      var totalPoin    = (G.diamonds || 0) * 5 + (G.fragments || 0) + (G.battlePoin || 0);
       var pulauSelesai = (G.completedIslands || []).length;
 
       apiGet('simpanPoin', {
-        nama         : G.heroName,
-        kelas        : G.heroKelas || '',
-        diamond      : G.diamonds  || 0,
-        fragment     : G.fragments || 0,
-        totalPoin    : totalPoin,
-        pulauSelesai : pulauSelesai,
-        status       : status || ''
+        nama          : G.heroName,
+        kelas         : G.heroKelas || '',
+        diamond       : G.diamonds  || 0,
+        fragment      : G.fragments || 0,
+        poinSerangan  : G.battlePoin || 0,
+        totalPoin     : totalPoin,
+        pulauSelesai  : pulauSelesai,
+        status        : status || ''
       }, function() {});
+    }
+
+    // ════════════════════════════════════════════
+    //  POIN SERANGAN
+    //  - Setiap kali hero menyerang (atk/s1/s2/ulti) hero
+    //    mendapat poin dasar.
+    //  - Saat monster berhasil dikalahkan, poin yang terkumpul
+    //    selama pertarungan itu DILIPATGANDAKAN (bonus sejumlah
+    //    poin yang sama ditambahkan lagi).
+    //  - Poin ini dipakai untuk belanja di Toko (menu ☰) dan
+    //    ikut direkap ke spreadsheet saat game berakhir.
+    // ════════════════════════════════════════════
+    var POIN_PER_SERANG = 1000;
+    var MP_COST_S1   = 30;   // Biaya Magic Power untuk memakai Skill 1 (heal)
+    var MP_REGEN_HIT = 8;    // MP yang didapat hero tiap kali berhasil menyerang (bukan S1)
+    var HEAL_S1_BASE = 20;   // HP dasar yang dipulihkan Skill 1
+
+    // Semakin sering skill di-upgrade di toko, semakin besar & dramatis efek animasinya.
+    // level 0 (belum upgrade) = skala normal (1x), tiap level menambah kekuatan efek.
+    function skillFxScale(level) {
+      level = level || 0;
+      return 1 + level * 0.16; // level 10 (MAX) → skala ±2.6x
+    }
+    var HARGA_DIAMOND_KE_POIN = 100000; // 1 diamond = 100.000 poin
+
+    function addPoin(jumlah, janganAnimasi) {
+      G.battlePoin += jumlah;
+      if (G.battlePoin < 0) G.battlePoin = 0;
+      updatePoinHUD(!janganAnimasi);
+    }
+
+    // Konversi 1 diamond menjadi poin (1 diamond = 100.000 poin)
+    function convertDiamondToPoin() {
+      if ((G.diamonds || 0) < 1) {
+        toast('💎 Diamond tidak cukup untuk ditukar', 'tDanger');
+        return;
+      }
+      G.diamonds -= 1;
+      addPoin(HARGA_DIAMOND_KE_POIN, true);
+      updateDiamondHUD();
+      toast('🔁 1 💎 ditukar jadi ⚡ ' + HARGA_DIAMOND_KE_POIN.toLocaleString('id-ID') + ' POIN!', 'tSuccess');
+    }
+
+    function updatePoinHUD(animasi) {
+      var el = document.getElementById('poinCount');
+      if (el) el.textContent = G.battlePoin;
+      var sp = document.getElementById('shopPoinCount');
+      if (sp) sp.textContent = G.battlePoin;
+      if (animasi) {
+        var hud = document.getElementById('poinHUD');
+        if (hud) {
+          hud.classList.remove('pop');
+          void hud.offsetWidth;
+          hud.classList.add('pop');
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════
+    //  TOKO (SHOP / MENU)
+    //  Beli potion, magic power, & upgrade attack/skill/ultimate
+    //  Semua dibayar memakai G.battlePoin (poin serangan)
+    // ════════════════════════════════════════════
+    var UPG_MAX = 10; // batas level upgrade permanen per sesi
+
+    var SHOP_ITEMS = [
+      {
+        key : 'potion',
+        icon: '🧪',
+        name: 'Potion',
+        desc: 'Pulihkan 30 HP hero',
+        cost: function() { return 2500; },
+        canBuy: function() { return G.hero.hp < G.hero.maxHp; },
+        disabledMsg: function() { return 'HP PENUH'; },
+        buy: function() {
+          var before = G.hero.hp;
+          G.hero.hp = Math.min(G.hero.maxHp, G.hero.hp + 30);
+          updateHeroHUD();
+          toast('🧪 Potion dipakai! +' + (G.hero.hp - before) + ' HP', 'tSuccess');
+        }
+      },
+      {
+        key : 'magic',
+        icon: '🔷',
+        name: 'Magic Power',
+        desc: 'Reset semua cooldown skill jadi siap pakai',
+        cost: function() { return 3500; },
+        canBuy: function() {
+          return (G.cd.atk > 0 || G.cd.s1 > 0 || G.cd.s2 > 0 || G.cd.ulti > 0);
+        },
+        disabledMsg: function() { return 'TIDAK ADA CD'; },
+        buy: function() {
+          resetCooldowns();
+          toast('🔷 Magic Power! Semua skill siap pakai', 'tSuccess');
+        }
+      },
+      {
+        key : 'atk',
+        icon: '⚔',
+        name: 'Upgrade Attack',
+        desc: '+5 damage serangan dasar',
+        cost: function() { return 5000 + G.upgLevel.atk * 2500; },
+        canBuy: function() { return G.upgLevel.atk < UPG_MAX; },
+        disabledMsg: function() { return 'MAX'; },
+        buy: function() {
+          G.hero.dmgAtk += 5;
+          G.upgLevel.atk++;
+          toast('⚔ Attack naik! ATK sekarang ' + G.hero.dmgAtk, 'tSuccess');
+        }
+      },
+      {
+        key : 'skill',
+        icon: '💫',
+        name: 'Upgrade Skill',
+        desc: '+5 damage Skill 1 & Skill 2',
+        cost: function() { return 6000 + G.upgLevel.skill * 3000; },
+        canBuy: function() { return G.upgLevel.skill < UPG_MAX; },
+        disabledMsg: function() { return 'MAX'; },
+        buy: function() {
+          G.hero.dmgS1 += 5;
+          G.hero.dmgS2 += 5;
+          G.upgLevel.skill++;
+          toast('💫 Skill naik! S1 ' + G.hero.dmgS1 + ' • S2 ' + G.hero.dmgS2, 'tSuccess');
+        }
+      },
+      {
+        key : 'ulti',
+        icon: '🔥',
+        name: 'Upgrade Ultimate',
+        desc: '+10 damage serangan ultimate',
+        cost: function() { return 8000 + G.upgLevel.ulti * 4000; },
+        canBuy: function() { return G.upgLevel.ulti < UPG_MAX; },
+        disabledMsg: function() { return 'MAX'; },
+        buy: function() {
+          G.hero.dmgUlti += 10;
+          G.upgLevel.ulti++;
+          toast('🔥 Ultimate naik! ATK Ulti sekarang ' + G.hero.dmgUlti, 'tSuccess');
+        }
+      },
+      {
+        key : 'tukarDiamond',
+        icon: '💎',
+        name: 'Tukar Diamond',
+        desc: 'Tukar 1 diamond jadi ⚡ ' + HARGA_DIAMOND_KE_POIN.toLocaleString('id-ID') + ' poin',
+        currency: 'diamond',
+        cost: function() { return 1; },
+        canBuy: function() { return (G.diamonds || 0) >= 1; },
+        disabledMsg: function() { return '💎 KURANG'; },
+        buy: function() { convertDiamondToPoin(true); }
+      }
+    ];
+
+    function openShop() {
+      renderShop();
+      document.getElementById('shopModal').classList.add('show');
+    }
+    function closeShop() {
+      document.getElementById('shopModal').classList.remove('show');
+    }
+    function closeShopOutside(evt) {
+      if (evt.target.id === 'shopModal') closeShop();
+    }
+
+    function renderShop() {
+      updatePoinHUD(false);
+      var list = document.getElementById('shopList');
+      list.innerHTML = '';
+      SHOP_ITEMS.forEach(function(item) {
+        var harga    = item.cost();
+        var currency = item.currency || 'poin';
+        var maxedOut = !item.canBuy();
+        var cukup    = currency === 'diamond' ? (G.diamonds || 0) >= harga : G.battlePoin >= harga;
+        var disabled = maxedOut || !cukup;
+    
+        var row = document.createElement('div');
+        row.className = 'shopItem';
+    
+        var lvlHtml = (item.key === 'atk' || item.key === 'skill' || item.key === 'ulti')
+          ? '<div class="shopLvl">LEVEL ' + G.upgLevel[item.key] + '/' + UPG_MAX + '</div>'
+          : '';
+    
+        var priceLabel = currency === 'diamond'
+          ? '💎 ' + harga
+          : '⚡ ' + harga.toLocaleString('id-ID');
+    
+        row.innerHTML =
+          '<div class="shopIcon">' + item.icon + '</div>' +
+          '<div class="shopInfo">' +
+            '<div class="shopName">' + item.name + '</div>' +
+            '<div class="shopDesc">' + item.desc + '</div>' +
+            lvlHtml +
+          '</div>' +
+          '<button class="shopBuyBtn" ' + (disabled ? 'disabled' : '') + '>' +
+            (maxedOut
+              ? '<span>' + item.disabledMsg() + '</span>'
+              : '<span>' + (currency === 'diamond' ? 'TUKAR' : 'BELI') + '</span><span class="sbPrice">' + priceLabel + '</span>') +
+          '</button>';
+    
+        row.querySelector('.shopBuyBtn').onclick = function() { buyItem(item.key); };
+        list.appendChild(row);
+      });
+    }
+
+    function buyItem(key) {
+      var item = SHOP_ITEMS.filter(function(i) { return i.key === key; })[0];
+      if (!item) return;
+      var harga    = item.cost();
+      var currency = item.currency || 'poin';
+      if (!item.canBuy()) { toast('Item ini sudah maksimal', 'tInfo'); return; }
+    
+      if (currency === 'diamond') {
+        if ((G.diamonds || 0) < harga) { toast('💎 Diamond tidak cukup!', 'tDanger'); return; }
+        item.buy();
+      } else {
+        if (G.battlePoin < harga) { toast('Poin tidak cukup!', 'tDanger'); return; }
+        addPoin(-harga, true);
+        item.buy();
+      }
+      renderShop();
     }
 
     function hsetupPickImage(evt) {
@@ -1379,6 +1815,7 @@
       // Inisialisasi stats hero
       var h = D.hero;
       G.hero.hp = G.hero.maxHp = h.hp_awal;
+      G.hero.mp = G.hero.maxMp = 100;
       G.hero.dmgAtk  = h.damage_serang;
       G.hero.dmgS1   = h.damage_skil1;
       G.hero.dmgS2   = h.damage_skil2;
@@ -1404,6 +1841,7 @@
       document.getElementById('iclBadge').innerHTML = 'PULAU ' + pulauNo + '<br>DISELESAIKAN! 🏆';
       document.getElementById('iclDiamond').textContent = G.diamonds;
       document.getElementById('iclFrag').textContent    = G.fragments;
+      document.getElementById('iclPoin').textContent    = G.battlePoin;
     
       // Spawn bintang-bintang
       var starsEl = document.getElementById('iclStars');
@@ -1469,11 +1907,27 @@
       var playerStatsEl = document.getElementById('playerStats');
       var islandListEl = document.getElementById('islandList');
       
-      playerStatsEl.innerHTML = '<div style="display:flex; justify-content:space-around; gap:10px;">'+
-        '<div>👤 ' + G.heroName + '</div>'+
+      playerStatsEl.innerHTML = '<div style="display:flex; flex-wrap:wrap; justify-content:space-around; align-items:center; gap:10px;">'+
+        '<div>👤 ' + G.heroName + ' &nbsp;<span style="color:var(--cyan)">⚡ ' + G.battlePoin + ' POIN</span></div>'+
         '<div>💎 Diamonds: ' + G.diamonds + '</div>'+
         '<div>🔷 Fragments: ' + G.fragments + '</div>'+
-        '</div>';
+        '</div>'+
+        '<div style="display:flex;justify-content:center;margin-top:10px;">'+
+        '<button id="btnTukarDiamond" style="cursor:pointer; padding:8px 16px; border-radius:20px; ' +
+        'background:linear-gradient(135deg,#5a0e9e,#8a28e0); border:1px solid rgba(255,215,0,.5); ' +
+        'color:var(--gold); font-family:var(--F2); font-size:9.5px; letter-spacing:1px; ' +
+        (G.diamonds < 1 ? 'opacity:.4;' : '') + '">'+
+        '🔁 TUKAR 1 💎 → ⚡ ' + HARGA_DIAMOND_KE_POIN.toLocaleString('id-ID') + ' POIN'+
+        '</button></div>';
+      
+      var btnTukar = document.getElementById('btnTukarDiamond');
+      if (btnTukar) {
+        btnTukar.disabled = G.diamonds < 1;
+        btnTukar.onclick = function() {
+          convertDiamondToPoin();
+          showIslandSelectScreen();
+        };
+      }
       
       islandListEl.innerHTML = '';
       
@@ -1872,9 +2326,11 @@
         return;
       }
     
-      G.monWaveIdx   = 0;
-      G.battleActive = true;
+      G.monWaveIdx      = 0;
+      G.pointsThisFight = 0;
+      G.battleActive    = true;
       showScreen('sBattle');
+      updatePoinHUD(false);
     
       loadImg('', pulau.gambar_background, function(src) {
         document.getElementById('battleBg').src = src;
@@ -1967,6 +2423,7 @@
     function useSkill(type) {
       if (!G.battleActive) return;
       if (G.cd[type] > 0) { toast(type.toUpperCase()+' CD: '+G.cd[type]+'s', 'tInfo'); return; }
+      if (type === 's1' && G.hero.mp < MP_COST_S1) { toast('✨ MP tidak cukup untuk Skill 1! ('+G.hero.mp+'/'+MP_COST_S1+')', 'tDanger'); return; }
       if (document.getElementById('quizModal').classList.contains('show')) return;
       if (document.getElementById('islandQuizModal').classList.contains('show')) return;
       if (document.getElementById('afterMonsterPopup').classList.contains('show')) return;
@@ -1977,8 +2434,8 @@
     function openQuiz(type) {
       var m = G.mon.data;
       if (!m) return;
-      var icons = { atk:'⚔', s1:'💫', s2:'⚡', ulti:'🔥' };
-      var names = { atk:'SERANGAN BIASA', s1:'SKILL 1', s2:'SKILL 2', ulti:'ULTIMATE' };
+      var icons = { atk:'⚔', s1:'💚', s2:'🔥', ulti:'🔥' };
+      var names = { atk:'SERANGAN BIASA', s1:'SKILL 1 (PEMULIHAN)', s2:'SKILL 2 (API)', ulti:'ULTIMATE' };
     
       document.getElementById('qSkIcon').textContent    = icons[type];
       document.getElementById('qSkName').textContent    = names[type];
@@ -2044,19 +2501,35 @@
     }
     
     function execHeroAttack(type) {
+      // Skill 1 kini adalah skill PEMULIHAN, bukan serangan — dialihkan ke fungsi sendiri.
+      if (type === 's1') { execHeroHeal(); return; }
+
       var p = D.pendukung;
       var conf = {
         atk : { dmg:G.hero.dmgAtk,  anim:p.animasi_serang,   sfx:p.mp3_serang   },
-        s1  : { dmg:G.hero.dmgS1,   anim:p.animasi_skil1,    sfx:p.mp3_skil1    },
         s2  : { dmg:G.hero.dmgS2,   anim:p.animasi_skil2,    sfx:p.mp3_skil2    },
         ulti: { dmg:G.hero.dmgUlti, anim:p.animasi_ultimate, sfx:p.mp3_ultimate  }
       }[type];
     
-      launchProjectile('hero', type);
+      if (type === 'ulti') {
+        launchUltimateAttack();
+      } else {
+        launchProjectile('hero', type);
+      }
       playSfx(conf.sfx);
       addLog('✓ Benar! Hero '+(type==='atk'?'menyerang':type.toUpperCase())+' −'+conf.dmg+' HP', 'logHero');
     
       G.mon.hp = Math.max(0, G.mon.hp - conf.dmg);
+
+      // Setiap serangan berhasil memberi poin. Poin ini terkumpul selama
+      // pertarungan berlangsung dan akan dilipatgandakan jika monster kalah.
+      G.pointsThisFight += POIN_PER_SERANG;
+      addPoin(POIN_PER_SERANG);
+
+      // Menyerang mengisi kembali Magic Power (MP) sedikit demi sedikit,
+      // supaya Skill 1 (heal) bisa dipakai lagi nanti.
+      G.hero.mp = Math.min(G.hero.maxMp, G.hero.mp + MP_REGEN_HIT);
+      updateHeroHUD();
     
       setTimeout(function() {
         showAnim(conf.anim);
@@ -2064,6 +2537,7 @@
         var mf = document.getElementById('monFloat');
         mf.style.filter = 'brightness(3.5) saturate(0)';
         setTimeout(function() { mf.style.filter = ''; }, 220);
+        if (type === 's2') triggerBurnEffect();
         updateMonHUD();
       }, 420);
     
@@ -2073,6 +2547,160 @@
         setTimeout(function() {
           fadeOutMonster(function() { monsterDefeated(); });
         }, 500);
+      }
+    }
+
+    // ── Skill 1: PEMULIHAN (Heal) — memulihkan bar nyawa hero + animasi hijau-keemasan ──
+    function execHeroHeal() {
+      var p = D.pendukung;
+
+      G.hero.mp = Math.max(0, G.hero.mp - MP_COST_S1);
+
+      var healAmt = Math.min(G.hero.maxHp - G.hero.hp, HEAL_S1_BASE + G.hero.dmgS1);
+      if (healAmt < 0) healAmt = 0;
+      G.hero.hp = Math.min(G.hero.maxHp, G.hero.hp + healAmt);
+
+      playSfx(p.mp3_skil1);
+      if (healAmt > 0) {
+        addLog('✓ Benar! Hero memakai Skill 1 — memulihkan +'+healAmt+' HP', 'logHero');
+      } else {
+        addLog('✓ Benar! Hero memakai Skill 1, namun HP sudah penuh', 'logHero');
+      }
+
+      // Poin tetap didapat walau skill ini bersifat heal, bukan serangan.
+      G.pointsThisFight += POIN_PER_SERANG;
+      addPoin(POIN_PER_SERANG);
+
+      showAnim(p.animasi_skil1);
+      triggerHealGlow();
+      if (healAmt > 0) spawnHealNum(healAmt);
+      updateHeroHUD();
+
+      startCD('s1', G.cdMax.s1);
+    }
+
+    // Efek visual hijau-keemasan yang menyala di hero saat Skill 1 dipakai
+    // Makin tinggi level upgrade skill, makin besar & lama efeknya
+    function triggerHealGlow() {
+      var hf = document.getElementById('heroFloat');
+      var arena = document.getElementById('sBattle');
+      if (!hf || !arena) return;
+
+      var lvl   = (G.upgLevel && G.upgLevel.skill) || 0;
+      var scale = skillFxScale(lvl);
+
+      hf.style.setProperty('--lvl', scale);
+      hf.classList.add('healGlow');
+      setTimeout(function() { hf.classList.remove('healGlow'); }, 1800);
+
+      var r = hf.getBoundingClientRect();
+      var cx = r.left + r.width / 2;
+      var cy = r.top  + r.height / 2;
+
+      var ringSize = 180 * scale;
+      var ring = document.createElement('div');
+      ring.className = 'healRing';
+      ring.style.left   = cx + 'px';
+      ring.style.top    = cy + 'px';
+      ring.style.width  = ringSize + 'px';
+      ring.style.height = ringSize + 'px';
+      ring.style.borderWidth = Math.round(3 * scale) + 'px';
+      arena.appendChild(ring);
+      setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 850);
+
+      var glyphs = ['✨','💚','🌟'];
+      var count  = Math.round(8 + lvl * 1.4);
+      for (var i = 0; i < count; i++) {
+        (function(i) {
+          setTimeout(function() {
+            var sp = document.createElement('div');
+            sp.className = 'healSpark';
+            sp.textContent = glyphs[i % glyphs.length];
+            var spread = 35 * scale;
+            var offX = Math.random() * spread * 2 - spread;
+            sp.style.left = (cx + offX - r.width * .18) + 'px';
+            sp.style.top  = (r.top + r.height * (0.25 + Math.random() * 0.5)) + 'px';
+            sp.style.setProperty('--sx', (Math.random() * 40 * scale - 20 * scale) + 'px');
+            sp.style.fontSize = (18 + lvl * 1.6) + 'px';
+            arena.appendChild(sp);
+            setTimeout(function() { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 1150);
+          }, i * 70);
+        })(i);
+      }
+    }
+
+    // Angka pemulihan HP mengambang berwarna hijau-keemasan
+    function spawnHealNum(amount) {
+      var el = document.createElement('div');
+      el.className = 'dmgNum';
+      el.textContent = '+' + amount + ' HP';
+      el.style.top   = (30 + Math.random() * 14) + '%';
+      el.style.left  = (8 + Math.random() * 14) + '%';
+      el.style.color = '#39FF14';
+      el.style.textShadow = '0 0 10px #FFD700, 0 0 6px #39FF14';
+      document.getElementById('sBattle').appendChild(el);
+      setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 1350);
+    }
+
+    // Efek api membakar monster saat Skill 2 dipakai
+    // Makin tinggi level upgrade skill, makin besar, ganas & lama kobaran apinya
+    function triggerBurnEffect() {
+      var mf = document.getElementById('monFloat');
+      var arena = document.getElementById('sBattle');
+      if (!mf || !arena) return;
+
+      var lvl   = (G.upgLevel && G.upgLevel.skill) || 0;
+      var scale = skillFxScale(lvl);
+
+      mf.style.setProperty('--lvl', scale);
+      mf.classList.add('burnFx');
+      setTimeout(function() { mf.classList.remove('burnFx'); }, 2200 + lvl * 60);
+
+      var r = mf.getBoundingClientRect();
+      var cx = r.left + r.width / 2;
+      var cy = r.top  + r.height / 2;
+      var big = Math.max(r.width, r.height) * 1.9 * scale;
+
+      // Ledakan cahaya api menyelimuti seluruh tubuh monster
+      var overlay = document.createElement('div');
+      overlay.className = 'burnOverlay';
+      overlay.style.left   = cx + 'px';
+      overlay.style.top    = cy + 'px';
+      overlay.style.width  = big + 'px';
+      overlay.style.height = big + 'px';
+      arena.appendChild(overlay);
+      setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 1350);
+
+      // Kobaran api besar di bawah kaki monster
+      var groundSize = 340 * scale;
+      var ground = document.createElement('div');
+      ground.className = 'burnGround';
+      ground.style.left   = cx + 'px';
+      ground.style.top    = (r.top + r.height * .82) + 'px';
+      ground.style.width  = groundSize + 'px';
+      ground.style.height = groundSize + 'px';
+      arena.appendChild(ground);
+      setTimeout(function() { if (ground.parentNode) ground.parentNode.removeChild(ground); }, 1350);
+
+      // Percikan api besar yang menyembur naik dari tubuh monster — makin banyak & besar seiring level
+      var glyphs = ['🔥','🔥','🔥','💥'];
+      var count  = Math.round(14 + lvl * 1.6);
+      var spread = r.width * 1.1 * scale;
+      for (var i = 0; i < count; i++) {
+        (function(i) {
+          setTimeout(function() {
+            var sp = document.createElement('div');
+            sp.className = 'flameSpark';
+            sp.textContent = glyphs[i % glyphs.length];
+            var offX = Math.random() * spread - spread / 2;
+            sp.style.left = (cx + offX - r.width * .18) + 'px';
+            sp.style.top  = (r.top + r.height * (0.15 + Math.random() * 0.6)) + 'px';
+            sp.style.setProperty('--sx', (Math.random() * 90 * scale - 45 * scale) + 'px');
+            sp.style.fontSize = (26 + Math.random() * 22 + lvl * 1.8) + 'px';
+            arena.appendChild(sp);
+            setTimeout(function() { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 1250);
+          }, i * 55);
+        })(i);
       }
     }
     
@@ -2123,6 +2751,16 @@
       showAnim(D.pendukung[sKey] || D.pendukung.animasi_kalah);
       addLog('🎉 '+(m?m.nama_monster:'Monster')+' dikalahkan!', 'logSystem');
       clearInterval(G.monTimerID);
+
+      // Bonus kemenangan: poin yang terkumpul selama melawan monster ini
+      // dilipatgandakan (ditambah sejumlah yang sama lagi).
+      if (G.pointsThisFight > 0) {
+        var bonus = G.pointsThisFight;
+        addPoin(bonus);
+        addLog('⚡ Bonus kemenangan! Poin dilipatgandakan +'+bonus, 'logSystem');
+        toast('⚡ Poin dilipatgandakan! +'+bonus+' POIN', 'tSuccess');
+      }
+      G.pointsThisFight = 0;
     
       var pulau = D.pulau[G.pulauIdx];
       // Filter quis berdasarkan index pulau
@@ -2222,6 +2860,7 @@
         document.getElementById('btnRetry').classList.remove('hide');
         document.getElementById('btnRetry').onclick = function() {
           G.hero.hp = G.hero.maxHp;
+          G.hero.mp = G.hero.maxMp;
           G.poinSaved = false; // supaya poin tetap terekam di percobaan berikutnya
           beginBattle(G.pulauIdx);
         };
@@ -2252,6 +2891,9 @@
         G.heroImgLocal = null;
         G.completedIslands = [];
         G.poinSaved = false;
+        G.battlePoin = 0;
+        G.pointsThisFight = 0;
+        G.upgLevel = { atk:0, skill:0, ulti:0 };
         setupCover();
         showScreen('sCover');
       };
@@ -2269,8 +2911,9 @@
         document.getElementById('infoPort').src = G.heroImgSrc || '';
         document.getElementById('infoBody').innerHTML =
           sr('HP', G.hero.hp+'/'+G.hero.maxHp) +
+          sr('MP', G.hero.mp+'/'+G.hero.maxMp) +
           sr('ATK Serang', G.hero.dmgAtk) +
-          sr('ATK Skill 1', G.hero.dmgS1) +
+          sr('Pemulihan Skill 1', '+'+(HEAL_S1_BASE+G.hero.dmgS1)+' HP ('+MP_COST_S1+' MP)') +
           sr('ATK Skill 2', G.hero.dmgS2) +
           sr('ATK Ultimate', G.hero.dmgUlti);
       } else {
@@ -2304,6 +2947,11 @@
       document.getElementById('heroHPBar').style.width = p + '%';
       document.getElementById('heroHPVal').textContent = G.hero.hp;
       document.getElementById('heroHPMax').textContent = G.hero.maxHp;
+
+      var mp = Math.max(0, (G.hero.mp / G.hero.maxMp) * 100);
+      document.getElementById('heroMPBar').style.width = mp + '%';
+      document.getElementById('heroMPVal').textContent = G.hero.mp;
+      document.getElementById('heroMPMax').textContent = G.hero.maxMp;
     }
     function updateMonHUD() {
       var p = G.mon.maxHp > 0 ? Math.max(0, (G.mon.hp / G.mon.maxHp) * 100) : 0;
@@ -2330,7 +2978,7 @@
     var PROJ_EMOJIS = {
       atk : { emoji:'⚔️', impact:'💥', color:'#FFD700', gif:'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNqZTh4a3Z5a24xYTJ6MXhpZXVwZHNyZmR1b3Vzb2wzMTFuZm0zciZlcD12MV9naWZzX3NlYXJjaCZjdD1n/4r7CQb1mgqo1EPxLcX/giphy.gif' },
       s1  : { emoji:'💫', impact:'✨', color:'#4488FF', gif:'https://i.giphy.com/3og0IFrHkIglEOg8Ba.webp' },
-      s2  : { emoji:'⚡', impact:'🌀', color:'#9B30FF', gif:'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bzVyNmt5Y2NxeXg3M3k3NTJzd3dpMjAzb3MyaTgyNnpqZGloeWZ2YiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xT9Igg1Kq1xmy7123m/giphy.gif' },
+      s2  : { emoji:'🔥', impact:'💥', color:'#FF6600', gif:'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bzVyNmt5Y2NxeXg3M3k3NTJzd3dpMjAzb3MyaTgyNnpqZGloeWZ2YiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xT9Igg1Kq1xmy7123m/giphy.gif' },
       ulti: { emoji:'🔥', impact:'💢', color:'#FF8800', gif:'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3dmbXBib2YwYjB3a2ZqdW91NThpOWZhY2pqdHBzeXIwYjYzOGdqMiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/aA0PfvxroO7JeUCwWe/giphy.gif' },
       mon : { emoji:'💀', impact:'💥', color:'#FF3333', gif:'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmlvZ3dueGV3OTB6Y2JvYnd6ZmN6dXB5NmI5eHp2bzZmanUwMmRnYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mZryFzM65MtpJ5fOMj/giphy.gif' }
     };
@@ -2351,8 +2999,124 @@
       setTimeout(function() { if (img.parentNode) img.parentNode.removeChild(img); }, 750);
     }
     
-    function launchProjectile(fromSide, type) {
-      var layer  = document.getElementById('attackLayer');
+    var ULTI_EMOJIS = ['☄️','🌟','✨','💥','⭐','🔥'];
+
+    // Serangan ultimate versi ekstrem: proyektil muncul dari segala penjuru
+    // layar lalu menghantam musuh secara bersamaan, disertai kilatan &
+    // cahaya emas yang bersinar (flash, vignette, beam cahaya, ring ledakan).
+    function launchUltimateAttack() {
+      var layer = document.getElementById('attackLayer');
+      var monEl = document.getElementById('monFloat');
+      var battle = document.getElementById('sBattle');
+      if (!layer || !monEl || !battle) { launchProjectile('hero', 'ulti'); return; }
+
+      // Ultimate juga makin dahsyat seiring upgrade "Ultimate" di toko.
+      var ultiScale = skillFxScale(G.upgLevel.ulti || 0);
+
+      var monR = monEl.getBoundingClientRect();
+      var layerR = layer.getBoundingClientRect();
+      var endX = monR.left + monR.width * .5;
+      var endY = monR.top  + monR.height * .42;
+
+      // ── 1) Kilatan cahaya emas full-screen ──
+      var flash = document.createElement('div');
+      flash.className = 'ultiFlashOverlay';
+      battle.appendChild(flash);
+      setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 650);
+
+      var vig = document.createElement('div');
+      vig.className = 'ultiVignette';
+      battle.appendChild(vig);
+      setTimeout(function() { if (vig.parentNode) vig.parentNode.removeChild(vig); }, 700);
+
+      // ── 2) Guncangan layar (makin kuat seiring level) ──
+      battle.style.setProperty('--lvl', ultiScale);
+      battle.classList.remove('screenShake'); void battle.offsetWidth;
+      battle.classList.add('screenShake');
+      setTimeout(function() { battle.classList.remove('screenShake'); }, 520);
+
+      // ── 3) Proyektil datang dari segala penjuru (atas, bawah, kiri, kanan, sudut) ──
+      var w = layerR.width, h = layerR.height;
+      var starts = [
+        { x: layerR.left + w*.5,  y: layerR.top - 40 },          // atas
+        { x: layerR.left + w*.5,  y: layerR.top + h + 40 },      // bawah
+        { x: layerR.left - 40,    y: layerR.top + h*.5 },        // kiri
+        { x: layerR.left + w+40,  y: layerR.top + h*.5 },        // kanan
+        { x: layerR.left - 30,    y: layerR.top - 30 },          // pojok kiri-atas
+        { x: layerR.left + w+30,  y: layerR.top - 30 },          // pojok kanan-atas
+        { x: layerR.left - 30,    y: layerR.top + h+30 },        // pojok kiri-bawah
+        { x: layerR.left + w+30,  y: layerR.top + h+30 }         // pojok kanan-bawah
+      ];
+
+      starts.forEach(function(st, i) {
+        setTimeout(function() {
+          var proj = document.createElement('div');
+          proj.className = 'ultiProjectile';
+          proj.textContent = ULTI_EMOJIS[i % ULTI_EMOJIS.length];
+          proj.style.fontSize = Math.round(30 * ultiScale) + 'px';
+          var tx = endX - st.x, ty = endY - st.y;
+          proj.style.cssText += [
+            'left:' + st.x + 'px', 'top:' + st.y + 'px',
+            '--tx:' + tx + 'px', '--ty:' + ty + 'px',
+            'animation:ultiConverge .48s cubic-bezier(.22,1,.36,1) forwards'
+          ].join(';');
+          layer.appendChild(proj);
+          setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 520);
+        }, i * 35);
+      });
+
+      // ── 4) Ledakan cahaya emas di titik musuh ──
+      setTimeout(function() {
+        // Beam cahaya menyebar dari titik hantaman — makin banyak & panjang seiring level
+        var beamCount = Math.round(10 + (G.upgLevel.ulti || 0) * 1.2);
+        for (var b = 0; b < beamCount; b++) {
+          var beam = document.createElement('div');
+          beam.className = 'ultiBeam';
+          var ang = (360 / beamCount) * b;
+          beam.style.cssText = [
+            'left:' + (endX - layerR.left) + 'px',
+            'top:'  + (endY - layerR.top)  + 'px',
+            'width:' + Math.max(w, h) * .8 * ultiScale + 'px',
+            'height:' + Math.round(3 * ultiScale) + 'px',
+            '--ang:' + ang + 'deg'
+          ].join(';');
+          layer.appendChild(beam);
+          (function(elm) { setTimeout(function() { if (elm.parentNode) elm.parentNode.removeChild(elm); }, 520); })(beam);
+        }
+
+        var coreSize = Math.round(34 * ultiScale);
+        var core = document.createElement('div');
+        core.className = 'ultiCore';
+        core.style.left   = (endX - layerR.left) + 'px';
+        core.style.top    = (endY - layerR.top)  + 'px';
+        core.style.width  = coreSize + 'px';
+        core.style.height = coreSize + 'px';
+        layer.appendChild(core);
+        setTimeout(function() { if (core.parentNode) core.parentNode.removeChild(core); }, 680);
+
+        var ringSize = Math.round(26 * ultiScale);
+        var ring = document.createElement('div');
+        ring.className = 'ultiBurstRing';
+        ring.style.left   = (endX - layerR.left) + 'px';
+        ring.style.top    = (endY - layerR.top)  + 'px';
+        ring.style.width  = ringSize + 'px';
+        ring.style.height = ringSize + 'px';
+        layer.appendChild(ring);
+        setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 780);
+
+        var imp = document.createElement('div');
+        imp.className = 'impactFx';
+        imp.textContent = '💢';
+        imp.style.cssText = 'left:' + (endX-22) + 'px;top:' + (endY-22) + 'px;color:#FFD700';
+        imp.style.fontSize = Math.round(46 * ultiScale) + 'px';
+        layer.appendChild(imp);
+        setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 600);
+
+        spawnImpactGif(PROJ_EMOJIS.ulti.gif, endX, endY, layer);
+      }, 420);
+    }
+
+    function launchProjectile(fromSide, type) {      var layer  = document.getElementById('attackLayer');
       var heroEl = document.getElementById('heroFloat');
       var monEl  = document.getElementById('monFloat');
       if (!layer || !heroEl || !monEl) return;
@@ -2363,6 +3127,10 @@
       var proj  = document.createElement('div');
       proj.className = 'projectile';
       proj.textContent = cfg.emoji;
+
+      // Serangan biasa juga makin besar efeknya seiring upgrade "Attack" di toko.
+      var atkScale = (fromSide === 'hero' && type === 'atk') ? skillFxScale(G.upgLevel.atk || 0) : 1;
+      if (atkScale > 1) proj.style.fontSize = Math.round(36 * atkScale) + 'px';
     
       var startX, startY, endX, endY;
       if (fromSide === 'hero') {
@@ -2379,7 +3147,7 @@
     
       var tx = endX - startX;
       var ty = endY - startY;
-      proj.style.cssText = [
+      proj.style.cssText += [
         'left:' + startX + 'px', 'top:' + startY + 'px',
         '--tx:' + tx + 'px', '--ty:' + ty + 'px',
         'color:' + cfg.color,
@@ -2392,6 +3160,7 @@
         imp.className = 'impactFx';
         imp.textContent = cfg.impact;
         imp.style.cssText = 'left:' + (endX-22) + 'px;top:' + (endY-22) + 'px;color:' + cfg.color;
+        if (atkScale > 1) imp.style.fontSize = Math.round(42 * atkScale) + 'px';
         layer.appendChild(imp);
         setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 600);
     

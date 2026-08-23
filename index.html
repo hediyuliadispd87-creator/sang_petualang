@@ -267,21 +267,20 @@
         .barVal{font-family:var(--F2);font-size:7.5px;color:rgba(255,255,255,.45)}
         .charFloat{position:absolute;z-index:15;cursor:pointer;transition:transform .18s,filter .18s}
         .charFloat:active{transform:scale(.93)}
-        /* ── HEAL GLOW (Skill 1) — makin kuat seiring level upgrade skill (--lvl) ── */
-        .charFloat.healGlow{animation:healGlowPulse .9s ease-in-out 2;z-index:20}
+        /* ── HEAL GLOW (Skill 1) ── */
+        .charFloat.healGlow{animation:healGlowPulse .9s ease-in-out 2}
         .charFloat.healGlow img{animation:healGlowImg .9s ease-in-out 2}
         @keyframes healGlowPulse{
           0%{filter:drop-shadow(0 0 0 rgba(57,255,20,0)) drop-shadow(0 0 0 rgba(255,215,0,0))}
-          40%{filter:drop-shadow(0 0 calc(26px * var(--lvl,1)) rgba(57,255,20,.95)) drop-shadow(0 0 calc(42px * var(--lvl,1)) rgba(255,215,0,.85)) drop-shadow(0 0 calc(60px * var(--lvl,1)) rgba(120,255,80,.5)) brightness(calc(1.5 + .06 * var(--lvl,1))) saturate(1.4)}
-          70%{filter:drop-shadow(0 0 calc(18px * var(--lvl,1)) rgba(255,215,0,.9)) drop-shadow(0 0 calc(30px * var(--lvl,1)) rgba(57,255,20,.7)) brightness(calc(1.25 + .04 * var(--lvl,1)))}
+          40%{filter:drop-shadow(0 0 26px rgba(57,255,20,.95)) drop-shadow(0 0 42px rgba(255,215,0,.85)) brightness(1.5) saturate(1.4)}
+          70%{filter:drop-shadow(0 0 18px rgba(255,215,0,.9)) drop-shadow(0 0 30px rgba(57,255,20,.7)) brightness(1.25)}
           100%{filter:drop-shadow(0 0 0 rgba(57,255,20,0)) drop-shadow(0 0 0 rgba(255,215,0,0)) brightness(1)}
         }
         @keyframes healGlowImg{
           0%,100%{transform:translateY(0) scale(1)}
-          45%{transform:translateY(calc(-8px * var(--lvl,1))) scale(calc(1.06 + .02 * var(--lvl,1)))}
+          45%{transform:translateY(-8px) scale(1.06)}
         }
         .healSpark{position:absolute;z-index:16;pointer-events:none;font-size:18px;
-          text-shadow:0 0 10px rgba(57,255,20,.8),0 0 18px rgba(255,215,0,.6);
           animation:healSparkRise 1.1s ease-out forwards}
         @keyframes healSparkRise{
           0%{opacity:0;transform:translate(0,0) scale(.5)}
@@ -292,22 +291,22 @@
           border:3px solid rgba(57,255,20,.85);box-shadow:0 0 18px rgba(255,215,0,.8);
           animation:healRingExpand .8s ease-out forwards}
         @keyframes healRingExpand{
-          0%{opacity:.95;transform:translate(-50%,-50%) scale(.05)}
-          100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+          0%{width:20px;height:20px;opacity:.95;transform:translate(-50%,-50%) scale(.4)}
+          100%{width:180px;height:180px;opacity:0;transform:translate(-50%,-50%) scale(1)}
         }
-        /* ── FIRE BURN (Skill 2) — makin besar & ganas seiring level upgrade skill (--lvl) ── */
+        /* ── FIRE BURN (Skill 2) ── */
         .charFloat.burnFx{animation:burnFlicker 1.3s ease-in-out 2;z-index:20}
         .charFloat.burnFx img{animation:burnShake .45s ease-in-out 5}
         @keyframes burnFlicker{
           0%{filter:drop-shadow(0 0 0 rgba(255,120,0,0)) drop-shadow(0 0 0 rgba(255,0,0,0))}
-          30%{filter:drop-shadow(0 0 calc(40px * var(--lvl,1)) rgba(255,140,0,1)) drop-shadow(0 0 calc(75px * var(--lvl,1)) rgba(255,20,0,.95)) drop-shadow(0 0 calc(110px * var(--lvl,1)) rgba(255,60,0,.6)) brightness(calc(1.55 + .08 * var(--lvl,1))) saturate(1.9)}
-          55%{filter:drop-shadow(0 0 calc(26px * var(--lvl,1)) rgba(255,190,0,.9)) drop-shadow(0 0 calc(50px * var(--lvl,1)) rgba(255,70,0,.8)) drop-shadow(0 0 calc(80px * var(--lvl,1)) rgba(255,30,0,.5)) brightness(calc(1.3 + .05 * var(--lvl,1)))}
+          30%{filter:drop-shadow(0 0 40px rgba(255,140,0,1)) drop-shadow(0 0 75px rgba(255,20,0,.95)) drop-shadow(0 0 110px rgba(255,60,0,.6)) brightness(1.55) saturate(1.9)}
+          55%{filter:drop-shadow(0 0 26px rgba(255,190,0,.9)) drop-shadow(0 0 50px rgba(255,70,0,.8)) drop-shadow(0 0 80px rgba(255,30,0,.5)) brightness(1.3)}
           100%{filter:drop-shadow(0 0 0 rgba(255,120,0,0)) drop-shadow(0 0 0 rgba(255,0,0,0)) brightness(1)}
         }
         @keyframes burnShake{
           0%,100%{transform:translateX(0) rotate(0)}
-          25%{transform:translateX(calc(-7px * var(--lvl,1))) rotate(calc(-2.5deg * var(--lvl,1)))}
-          75%{transform:translateX(calc(7px * var(--lvl,1))) rotate(calc(2.5deg * var(--lvl,1)))}
+          25%{transform:translateX(-7px) rotate(-2.5deg)}
+          75%{transform:translateX(7px) rotate(2.5deg)}
         }
         .flameSpark{position:absolute;z-index:21;pointer-events:none;font-size:34px;
           text-shadow:0 0 14px rgba(255,120,0,.9),0 0 26px rgba(255,40,0,.7);
@@ -321,9 +320,9 @@
           background:radial-gradient(circle,rgba(255,150,0,.7) 0%,rgba(255,60,0,.4) 40%,rgba(255,20,0,.15) 65%,transparent 78%);
           animation:burnGroundPulse 1.3s ease-out forwards}
         @keyframes burnGroundPulse{
-          0%{opacity:0;transform:translate(-50%,-50%) scale(.05)}
+          0%{width:16px;height:16px;opacity:0;transform:translate(-50%,-50%) scale(.3)}
           25%{opacity:1}
-          100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+          100%{width:340px;height:340px;opacity:0;transform:translate(-50%,-50%) scale(1)}
         }
         .burnOverlay{position:absolute;z-index:19;pointer-events:none;border-radius:50%;
           background:radial-gradient(circle,rgba(255,160,0,.55) 0%,rgba(255,60,0,.35) 45%,transparent 72%);
@@ -391,15 +390,15 @@
         #sBattle.screenShake{animation:ultiScreenShake .5s ease-in-out}
         @keyframes ultiScreenShake{
           0%,100%{transform:translate(0,0)}
-          10%{transform:translate(calc(-7px * var(--lvl,1)),calc(3px * var(--lvl,1)))}
-          20%{transform:translate(calc(7px * var(--lvl,1)),calc(-5px * var(--lvl,1)))}
-          30%{transform:translate(calc(-9px * var(--lvl,1)),calc(3px * var(--lvl,1)))}
-          40%{transform:translate(calc(8px * var(--lvl,1)),calc(4px * var(--lvl,1)))}
-          50%{transform:translate(calc(-6px * var(--lvl,1)),calc(-4px * var(--lvl,1)))}
-          60%{transform:translate(calc(5px * var(--lvl,1)),calc(5px * var(--lvl,1)))}
-          70%{transform:translate(calc(-4px * var(--lvl,1)),calc(-2px * var(--lvl,1)))}
-          80%{transform:translate(calc(3px * var(--lvl,1)),calc(2px * var(--lvl,1)))}
-          90%{transform:translate(calc(-2px * var(--lvl,1)),calc(1px * var(--lvl,1)))}}
+          10%{transform:translate(-7px,3px)}
+          20%{transform:translate(7px,-5px)}
+          30%{transform:translate(-9px,3px)}
+          40%{transform:translate(8px,4px)}
+          50%{transform:translate(-6px,-4px)}
+          60%{transform:translate(5px,5px)}
+          70%{transform:translate(-4px,-2px)}
+          80%{transform:translate(3px,2px)}
+          90%{transform:translate(-2px,1px)}}
         .ultiFlashOverlay{position:absolute;inset:0;z-index:997;pointer-events:none;
           background:radial-gradient(circle at 50% 45%,rgba(255,250,210,.96) 0%,
             rgba(255,215,0,.6) 32%,rgba(255,165,0,.18) 55%,rgba(255,165,0,0) 75%);
@@ -448,6 +447,88 @@
           0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
           30%{opacity:1;transform:translate(-50%,-50%) scale(1.9)}
           100%{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
+
+        /* ── EFEK SERANGAN MONSTER — sengaja beda total dari efek hero
+           (hero = emas/cyan/oranye bercahaya terang; monster = ungu/merah/hitam
+           bernuansa gelap-mengancam). Makin tinggi status monster (prajurit →
+           elit → boss) & makin kuat jenis serangannya, makin dahsyat efeknya. ── */
+        .monProjectile{position:absolute;pointer-events:none;z-index:999;
+          font-size:clamp(22px,5.5vw,32px);
+          filter:drop-shadow(0 0 8px #9B30FF) drop-shadow(0 0 16px #FF3333);
+          will-change:transform,opacity}
+        @keyframes monConverge{
+          0%{opacity:0;transform:translate(0,0) scale(.25) rotate(0deg)}
+          14%{opacity:1;transform:translate(calc(var(--tx)*.1),calc(var(--ty)*.1)) scale(1.15) rotate(-140deg)}
+          85%{opacity:1}
+          100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.55) rotate(-480deg)}}
+        .monImpactRing{position:absolute;pointer-events:none;z-index:68;
+          width:22px;height:22px;border-radius:50%;
+          border:3px solid rgba(255,60,60,.9);
+          box-shadow:0 0 16px 5px rgba(155,48,255,.55);
+          animation:monRingExpand .6s ease-out forwards}
+        @keyframes monRingExpand{
+          0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(5)}}
+        .monBurstRing{position:absolute;pointer-events:none;z-index:68;
+          width:26px;height:26px;border-radius:50%;
+          border:3px solid rgba(255,60,90,.95);
+          box-shadow:0 0 20px 6px rgba(155,48,255,.7);
+          animation:monRingExpandBig .78s ease-out forwards}
+        @keyframes monRingExpandBig{
+          0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(9)}}
+        .monCore{position:absolute;pointer-events:none;z-index:69;
+          width:34px;height:34px;border-radius:50%;
+          background:radial-gradient(circle,#2a0033 0%,#9B30FF 40%,rgba(255,30,30,0) 75%);
+          filter:drop-shadow(0 0 26px #FF3333);
+          animation:monCorePop .68s ease-out forwards}
+        @keyframes monCorePop{
+          0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+          30%{opacity:1;transform:translate(-50%,-50%) scale(2.1)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(2.8)}}
+        .monBeam{position:absolute;pointer-events:none;z-index:66;height:3px;
+          border-radius:3px;left:0;top:0;
+          background:linear-gradient(90deg,rgba(155,48,255,0) 0%,#9B30FF 42%,
+            #FF3333 50%,#9B30FF 58%,rgba(155,48,255,0) 100%);
+          box-shadow:0 0 16px 3px rgba(155,48,255,.85);
+          transform-origin:0 50%;animation:monBeamFade .5s ease-out forwards}
+        @keyframes monBeamFade{
+          0%{opacity:0;transform:rotate(var(--ang)) scaleX(0)}
+          25%{opacity:1;transform:rotate(var(--ang)) scaleX(1)}
+          100%{opacity:0;transform:rotate(var(--ang)) scaleX(1)}}
+        .monFlashOverlay{position:absolute;inset:0;z-index:997;pointer-events:none;
+          background:radial-gradient(circle at 50% 45%,rgba(60,0,20,.88) 0%,
+            rgba(120,0,45,.58) 30%,rgba(80,0,120,.3) 55%,rgba(80,0,120,0) 78%);
+          animation:monFlashFade .55s ease-out forwards;mix-blend-mode:screen}
+        @keyframes monFlashFade{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+        .monVignette{position:absolute;inset:0;z-index:996;pointer-events:none;
+          box-shadow:inset 0 0 0 0 rgba(255,30,30,0);
+          animation:monVignettePulse .6s ease-out forwards}
+        @keyframes monVignettePulse{
+          0%{box-shadow:inset 0 0 0 0 rgba(255,30,30,0)}
+          22%{box-shadow:inset 0 0 55px 16px rgba(155,48,255,.5)}
+          100%{box-shadow:inset 0 0 130px 55px rgba(255,30,30,0)}}
+        .monCrack{position:absolute;pointer-events:none;z-index:70;
+          font-size:clamp(30px,7vw,46px);color:#FF3333;
+          text-shadow:0 0 14px #9B30FF,0 0 26px #FF3333;
+          animation:monCrackPop .6s ease-out forwards}
+        @keyframes monCrackPop{
+          0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-8deg)}
+          25%{opacity:1;transform:translate(-50%,-50%) scale(1.25) rotate(4deg)}
+          100%{opacity:0;transform:translate(-50%,-50%) scale(1.5) rotate(0deg)}}
+        #sBattle.monShake{animation:monScreenShake .55s ease-in-out}
+        @keyframes monScreenShake{
+          0%,100%{transform:translate(0,0)}
+          10%{transform:translate(6px,-4px)}
+          20%{transform:translate(-8px,5px)}
+          30%{transform:translate(8px,-3px)}
+          40%{transform:translate(-7px,-5px)}
+          50%{transform:translate(6px,4px)}
+          60%{transform:translate(-5px,-5px)}
+          70%{transform:translate(4px,2px)}
+          80%{transform:translate(-3px,-2px)}
+          90%{transform:translate(2px,1px)}}
+
         #battleLog{position:absolute;bottom:115px;left:50%;transform:translateX(-50%);
           width:min(340px,82vw);z-index:22;pointer-events:none;
           display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -1556,13 +1637,6 @@
     var MP_COST_S1   = 30;   // Biaya Magic Power untuk memakai Skill 1 (heal)
     var MP_REGEN_HIT = 8;    // MP yang didapat hero tiap kali berhasil menyerang (bukan S1)
     var HEAL_S1_BASE = 20;   // HP dasar yang dipulihkan Skill 1
-
-    // Semakin sering skill di-upgrade di toko, semakin besar & dramatis efek animasinya.
-    // level 0 (belum upgrade) = skala normal (1x), tiap level menambah kekuatan efek.
-    function skillFxScale(level) {
-      level = level || 0;
-      return 1 + level * 0.16; // level 10 (MAX) → skala ±2.6x
-    }
     var HARGA_DIAMOND_KE_POIN = 100000; // 1 diamond = 100.000 poin
 
     function addPoin(jumlah, janganAnimasi) {
@@ -2391,23 +2465,24 @@
       var m = G.mon.data;
       if (!m) return;
       var roll = Math.random();
-      var dmg, name, aKey;
+      var dmg, name, aType;
       if (roll < .48) {
-        dmg=Math.floor(m.damage_skil1*.55); name='SERANG BIASA'; aKey='animasi_serang';
+        dmg=Math.floor(m.damage_skil1*.55); name='SERANG BIASA'; aType='serang';
       } else if (roll < .74) {
-        dmg=m.damage_skil1; name='SKILL 1'; aKey='animasi_skil1';
+        dmg=m.damage_skil1; name='SKILL 1'; aType='skill1';
       } else if (roll < .91) {
-        dmg=m.damage_skil2; name='SKILL 2'; aKey='animasi_skil2';
+        dmg=m.damage_skil2; name='SKILL 2'; aType='skill2';
       } else {
-        dmg=m.damage_ulti; name='ULTIMATE'; aKey='animasi_ultimate';
+        dmg=m.damage_ulti; name='ULTIMATE'; aType='ultimate';
         playSfx(D.pendukung.mp3_ultimate);
       }
     
       G.hero.hp = Math.max(0, G.hero.hp - dmg);
-      launchProjectile('mon', 'mon');
+      // Efek animasi serangan monster: berbeda total dari efek hero, dan
+      // makin dahsyat sesuai tingkatan monster (prajurit/elit/boss) + jenis serangannya.
+      launchMonsterAttack(m, aType);
     
       setTimeout(function() {
-        showAnim(D.pendukung[aKey]);
         spawnDmg(dmg, 'heroSide');
         updateHeroHUD();
         var hf = document.getElementById('heroFloat');
@@ -2580,16 +2655,11 @@
     }
 
     // Efek visual hijau-keemasan yang menyala di hero saat Skill 1 dipakai
-    // Makin tinggi level upgrade skill, makin besar & lama efeknya
     function triggerHealGlow() {
       var hf = document.getElementById('heroFloat');
       var arena = document.getElementById('sBattle');
       if (!hf || !arena) return;
 
-      var lvl   = (G.upgLevel && G.upgLevel.skill) || 0;
-      var scale = skillFxScale(lvl);
-
-      hf.style.setProperty('--lvl', scale);
       hf.classList.add('healGlow');
       setTimeout(function() { hf.classList.remove('healGlow'); }, 1800);
 
@@ -2597,31 +2667,24 @@
       var cx = r.left + r.width / 2;
       var cy = r.top  + r.height / 2;
 
-      var ringSize = 180 * scale;
       var ring = document.createElement('div');
       ring.className = 'healRing';
-      ring.style.left   = cx + 'px';
-      ring.style.top    = cy + 'px';
-      ring.style.width  = ringSize + 'px';
-      ring.style.height = ringSize + 'px';
-      ring.style.borderWidth = Math.round(3 * scale) + 'px';
+      ring.style.left = cx + 'px';
+      ring.style.top  = cy + 'px';
       arena.appendChild(ring);
       setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 850);
 
       var glyphs = ['✨','💚','🌟'];
-      var count  = Math.round(8 + lvl * 1.4);
-      for (var i = 0; i < count; i++) {
+      for (var i = 0; i < 8; i++) {
         (function(i) {
           setTimeout(function() {
             var sp = document.createElement('div');
             sp.className = 'healSpark';
             sp.textContent = glyphs[i % glyphs.length];
-            var spread = 35 * scale;
-            var offX = Math.random() * spread * 2 - spread;
+            var offX = Math.random() * 70 - 35;
             sp.style.left = (cx + offX - r.width * .18) + 'px';
             sp.style.top  = (r.top + r.height * (0.25 + Math.random() * 0.5)) + 'px';
-            sp.style.setProperty('--sx', (Math.random() * 40 * scale - 20 * scale) + 'px');
-            sp.style.fontSize = (18 + lvl * 1.6) + 'px';
+            sp.style.setProperty('--sx', (Math.random() * 40 - 20) + 'px');
             arena.appendChild(sp);
             setTimeout(function() { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 1150);
           }, i * 70);
@@ -2643,23 +2706,18 @@
     }
 
     // Efek api membakar monster saat Skill 2 dipakai
-    // Makin tinggi level upgrade skill, makin besar, ganas & lama kobaran apinya
     function triggerBurnEffect() {
       var mf = document.getElementById('monFloat');
       var arena = document.getElementById('sBattle');
       if (!mf || !arena) return;
 
-      var lvl   = (G.upgLevel && G.upgLevel.skill) || 0;
-      var scale = skillFxScale(lvl);
-
-      mf.style.setProperty('--lvl', scale);
       mf.classList.add('burnFx');
-      setTimeout(function() { mf.classList.remove('burnFx'); }, 2200 + lvl * 60);
+      setTimeout(function() { mf.classList.remove('burnFx'); }, 2200);
 
       var r = mf.getBoundingClientRect();
       var cx = r.left + r.width / 2;
       var cy = r.top  + r.height / 2;
-      var big = Math.max(r.width, r.height) * 1.9 * scale;
+      var big = Math.max(r.width, r.height) * 1.9;
 
       // Ledakan cahaya api menyelimuti seluruh tubuh monster
       var overlay = document.createElement('div');
@@ -2672,31 +2730,26 @@
       setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 1350);
 
       // Kobaran api besar di bawah kaki monster
-      var groundSize = 340 * scale;
       var ground = document.createElement('div');
       ground.className = 'burnGround';
-      ground.style.left   = cx + 'px';
-      ground.style.top    = (r.top + r.height * .82) + 'px';
-      ground.style.width  = groundSize + 'px';
-      ground.style.height = groundSize + 'px';
+      ground.style.left = cx + 'px';
+      ground.style.top  = (r.top + r.height * .82) + 'px';
       arena.appendChild(ground);
       setTimeout(function() { if (ground.parentNode) ground.parentNode.removeChild(ground); }, 1350);
 
-      // Percikan api besar yang menyembur naik dari tubuh monster — makin banyak & besar seiring level
+      // Percikan api besar yang menyembur naik dari tubuh monster
       var glyphs = ['🔥','🔥','🔥','💥'];
-      var count  = Math.round(14 + lvl * 1.6);
-      var spread = r.width * 1.1 * scale;
-      for (var i = 0; i < count; i++) {
+      for (var i = 0; i < 14; i++) {
         (function(i) {
           setTimeout(function() {
             var sp = document.createElement('div');
             sp.className = 'flameSpark';
             sp.textContent = glyphs[i % glyphs.length];
-            var offX = Math.random() * spread - spread / 2;
+            var offX = Math.random() * r.width * 1.1 - r.width * .55;
             sp.style.left = (cx + offX - r.width * .18) + 'px';
             sp.style.top  = (r.top + r.height * (0.15 + Math.random() * 0.6)) + 'px';
-            sp.style.setProperty('--sx', (Math.random() * 90 * scale - 45 * scale) + 'px');
-            sp.style.fontSize = (26 + Math.random() * 22 + lvl * 1.8) + 'px';
+            sp.style.setProperty('--sx', (Math.random() * 90 - 45) + 'px');
+            sp.style.fontSize = (26 + Math.random() * 22) + 'px';
             arena.appendChild(sp);
             setTimeout(function() { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 1250);
           }, i * 55);
@@ -3010,9 +3063,6 @@
       var battle = document.getElementById('sBattle');
       if (!layer || !monEl || !battle) { launchProjectile('hero', 'ulti'); return; }
 
-      // Ultimate juga makin dahsyat seiring upgrade "Ultimate" di toko.
-      var ultiScale = skillFxScale(G.upgLevel.ulti || 0);
-
       var monR = monEl.getBoundingClientRect();
       var layerR = layer.getBoundingClientRect();
       var endX = monR.left + monR.width * .5;
@@ -3029,8 +3079,7 @@
       battle.appendChild(vig);
       setTimeout(function() { if (vig.parentNode) vig.parentNode.removeChild(vig); }, 700);
 
-      // ── 2) Guncangan layar (makin kuat seiring level) ──
-      battle.style.setProperty('--lvl', ultiScale);
+      // ── 2) Guncangan layar ──
       battle.classList.remove('screenShake'); void battle.offsetWidth;
       battle.classList.add('screenShake');
       setTimeout(function() { battle.classList.remove('screenShake'); }, 520);
@@ -3053,9 +3102,8 @@
           var proj = document.createElement('div');
           proj.className = 'ultiProjectile';
           proj.textContent = ULTI_EMOJIS[i % ULTI_EMOJIS.length];
-          proj.style.fontSize = Math.round(30 * ultiScale) + 'px';
           var tx = endX - st.x, ty = endY - st.y;
-          proj.style.cssText += [
+          proj.style.cssText = [
             'left:' + st.x + 'px', 'top:' + st.y + 'px',
             '--tx:' + tx + 'px', '--ty:' + ty + 'px',
             'animation:ultiConverge .48s cubic-bezier(.22,1,.36,1) forwards'
@@ -3067,8 +3115,8 @@
 
       // ── 4) Ledakan cahaya emas di titik musuh ──
       setTimeout(function() {
-        // Beam cahaya menyebar dari titik hantaman — makin banyak & panjang seiring level
-        var beamCount = Math.round(10 + (G.upgLevel.ulti || 0) * 1.2);
+        // Beam cahaya menyebar dari titik hantaman (efek "bersinar")
+        var beamCount = 10;
         for (var b = 0; b < beamCount; b++) {
           var beam = document.createElement('div');
           beam.className = 'ultiBeam';
@@ -3076,31 +3124,24 @@
           beam.style.cssText = [
             'left:' + (endX - layerR.left) + 'px',
             'top:'  + (endY - layerR.top)  + 'px',
-            'width:' + Math.max(w, h) * .8 * ultiScale + 'px',
-            'height:' + Math.round(3 * ultiScale) + 'px',
+            'width:' + Math.max(w, h) * .8 + 'px',
             '--ang:' + ang + 'deg'
           ].join(';');
           layer.appendChild(beam);
           (function(elm) { setTimeout(function() { if (elm.parentNode) elm.parentNode.removeChild(elm); }, 520); })(beam);
         }
 
-        var coreSize = Math.round(34 * ultiScale);
         var core = document.createElement('div');
         core.className = 'ultiCore';
-        core.style.left   = (endX - layerR.left) + 'px';
-        core.style.top    = (endY - layerR.top)  + 'px';
-        core.style.width  = coreSize + 'px';
-        core.style.height = coreSize + 'px';
+        core.style.left = (endX - layerR.left) + 'px';
+        core.style.top  = (endY - layerR.top)  + 'px';
         layer.appendChild(core);
         setTimeout(function() { if (core.parentNode) core.parentNode.removeChild(core); }, 680);
 
-        var ringSize = Math.round(26 * ultiScale);
         var ring = document.createElement('div');
         ring.className = 'ultiBurstRing';
-        ring.style.left   = (endX - layerR.left) + 'px';
-        ring.style.top    = (endY - layerR.top)  + 'px';
-        ring.style.width  = ringSize + 'px';
-        ring.style.height = ringSize + 'px';
+        ring.style.left = (endX - layerR.left) + 'px';
+        ring.style.top  = (endY - layerR.top)  + 'px';
         layer.appendChild(ring);
         setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 780);
 
@@ -3108,7 +3149,6 @@
         imp.className = 'impactFx';
         imp.textContent = '💢';
         imp.style.cssText = 'left:' + (endX-22) + 'px;top:' + (endY-22) + 'px;color:#FFD700';
-        imp.style.fontSize = Math.round(46 * ultiScale) + 'px';
         layer.appendChild(imp);
         setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 600);
 
@@ -3127,10 +3167,6 @@
       var proj  = document.createElement('div');
       proj.className = 'projectile';
       proj.textContent = cfg.emoji;
-
-      // Serangan biasa juga makin besar efeknya seiring upgrade "Attack" di toko.
-      var atkScale = (fromSide === 'hero' && type === 'atk') ? skillFxScale(G.upgLevel.atk || 0) : 1;
-      if (atkScale > 1) proj.style.fontSize = Math.round(36 * atkScale) + 'px';
     
       var startX, startY, endX, endY;
       if (fromSide === 'hero') {
@@ -3147,7 +3183,7 @@
     
       var tx = endX - startX;
       var ty = endY - startY;
-      proj.style.cssText += [
+      proj.style.cssText = [
         'left:' + startX + 'px', 'top:' + startY + 'px',
         '--tx:' + tx + 'px', '--ty:' + ty + 'px',
         'color:' + cfg.color,
@@ -3160,7 +3196,6 @@
         imp.className = 'impactFx';
         imp.textContent = cfg.impact;
         imp.style.cssText = 'left:' + (endX-22) + 'px;top:' + (endY-22) + 'px;color:' + cfg.color;
-        if (atkScale > 1) imp.style.fontSize = Math.round(42 * atkScale) + 'px';
         layer.appendChild(imp);
         setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 600);
     
@@ -3170,7 +3205,266 @@
     
       setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 580);
     }
-    
+
+    // ════════════════════════════════════════════
+    //  EFEK SERANGAN MONSTER (termasuk BOSS)
+    //  Sengaja dibuat BEDA TOTAL dari efek serangan hero:
+    //  hero = emas/cyan/oranye terang, monster = ungu/merah/hitam kelam.
+    //  Semakin tinggi status monster (prajurit → elit → boss) dan semakin
+    //  kuat jenis serangannya (serang biasa → skill1 → skill2 → ultimate),
+    //  semakin dahsyat efek yang muncul.
+    // ════════════════════════════════════════════
+    var MON_ATK_EMOJI = { serang:'💀', skill1:'🕸️', skill2:'☠️', ultimate:'👹' };
+    var MON_ULTI_EMOJIS = ['💀','⚡','🌑','🦴','☠️','🩸'];
+
+    // Tentukan tingkatan monster dari kolom "status" (bebas teks dari sheet)
+    // dan level sebagai cadangan bila teksnya tidak dikenali.
+    function getMonsterTier(m) {
+      var s   = ((m && m.status) || '').toString().toLowerCase();
+      var lvl = parseInt((m && m.level) || 0, 10) || 0;
+      if (s.indexOf('boss') !== -1 || s.indexOf('raja') !== -1 ||
+          s.indexOf('final') !== -1 || s.indexOf('akhir') !== -1 || lvl >= 15) return 'boss';
+      if (s.indexOf('elit') !== -1 || s.indexOf('elite') !== -1 || s.indexOf('kuat') !== -1 ||
+          s.indexOf('madya') !== -1 || s.indexOf('menengah') !== -1 || lvl >= 8) return 'elit';
+      return 'prajurit';
+    }
+
+    // Gabungkan tingkatan monster + jenis serangan → level kedahsyatan efek (1-4)
+    function monsterAttackLevel(tier, aType) {
+      var tierScore = tier === 'boss' ? 2 : (tier === 'elit' ? 1 : 0);
+      var atkScore  = { serang:0, skill1:1, skill2:2, ultimate:3 }[aType] || 0;
+      var total = tierScore * 4 + atkScore;
+      if (total <= 1) return 1;
+      if (total <= 3) return 2;
+      if (total <= 6) return 3;
+      return 4;
+    }
+
+    function launchMonsterAttack(m, aType) {
+      var layer  = document.getElementById('attackLayer');
+      var heroEl = document.getElementById('heroFloat');
+      var monEl  = document.getElementById('monFloat');
+      var battle = document.getElementById('sBattle');
+      if (!layer || !heroEl || !monEl) { launchProjectile('mon', 'mon'); return; }
+
+      var tier  = getMonsterTier(m);
+      var level = monsterAttackLevel(tier, aType);
+      var emoji = MON_ATK_EMOJI[aType] || '💀';
+
+      var heroR  = heroEl.getBoundingClientRect();
+      var monR   = monEl.getBoundingClientRect();
+      var layerR = layer.getBoundingClientRect();
+      var startX = monR.left  + monR.width  * .25;
+      var startY = monR.top   + monR.height * .4;
+      var endX   = heroR.left + heroR.width  * .65;
+      var endY   = heroR.top  + heroR.height * .4;
+
+      if (level === 1) { monFxLevel1(startX, startY, endX, endY, emoji, layer); return; }
+      if (level === 2) { monFxLevel2(startX, startY, endX, endY, emoji, layer, layerR); return; }
+      if (level === 3) { monFxLevel3(startX, startY, endX, endY, emoji, layer, layerR, battle); return; }
+      monFxLevel4(endX, endY, layer, layerR, battle);
+    }
+
+    // LEVEL 1 — serangan ringan (biasanya prajurit, serang biasa): satu proyektil gelap sederhana
+    function monFxLevel1(sx, sy, ex, ey, emoji, layer) {
+      var proj = document.createElement('div');
+      proj.className = 'monProjectile';
+      proj.textContent = emoji;
+      var tx = ex - sx, ty = ey - sy;
+      proj.style.cssText = [
+        'left:' + sx + 'px', 'top:' + sy + 'px',
+        '--tx:' + tx + 'px', '--ty:' + ty + 'px',
+        'font-size:22px',
+        'animation:projMonToHero .5s cubic-bezier(.22,1,.36,1) forwards'
+      ].join(';');
+      layer.appendChild(proj);
+      setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 560);
+
+      setTimeout(function() {
+        var imp = document.createElement('div');
+        imp.className = 'impactFx';
+        imp.textContent = '💥';
+        imp.style.cssText = 'left:' + (ex-18) + 'px;top:' + (ey-18) + 'px;color:#FF3333;font-size:28px';
+        layer.appendChild(imp);
+        setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 550);
+      }, 380);
+    }
+
+    // LEVEL 2 — serangan sedang: proyektil lebih besar + ring dampak ungu
+    function monFxLevel2(sx, sy, ex, ey, emoji, layer, layerR) {
+      var proj = document.createElement('div');
+      proj.className = 'monProjectile';
+      proj.textContent = emoji;
+      var tx = ex - sx, ty = ey - sy;
+      proj.style.cssText = [
+        'left:' + sx + 'px', 'top:' + sy + 'px',
+        '--tx:' + tx + 'px', '--ty:' + ty + 'px',
+        'animation:projMonToHero .5s cubic-bezier(.22,1,.36,1) forwards'
+      ].join(';');
+      layer.appendChild(proj);
+      setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 560);
+
+      setTimeout(function() {
+        var ring = document.createElement('div');
+        ring.className = 'monImpactRing';
+        ring.style.left = (ex - layerR.left) + 'px';
+        ring.style.top  = (ey - layerR.top)  + 'px';
+        layer.appendChild(ring);
+        setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 650);
+
+        var imp = document.createElement('div');
+        imp.className = 'impactFx';
+        imp.textContent = '💢';
+        imp.style.cssText = 'left:' + (ex-20) + 'px;top:' + (ey-20) + 'px;color:#9B30FF';
+        layer.appendChild(imp);
+        setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 550);
+
+        spawnImpactGif(PROJ_EMOJIS.mon.gif, ex, ey, layer);
+      }, 380);
+    }
+
+    // LEVEL 3 — serangan kuat (elit skill/ultimate, atau boss serang biasa):
+    // proyektil besar + guncangan ringan + vignette + ring & inti ledakan
+    function monFxLevel3(sx, sy, ex, ey, emoji, layer, layerR, battle) {
+      if (battle) {
+        battle.classList.remove('monShake'); void battle.offsetWidth;
+        battle.classList.add('monShake');
+        setTimeout(function() { battle.classList.remove('monShake'); }, 420);
+      }
+      if (battle) {
+        var vig = document.createElement('div');
+        vig.className = 'monVignette';
+        battle.appendChild(vig);
+        setTimeout(function() { if (vig.parentNode) vig.parentNode.removeChild(vig); }, 650);
+      }
+
+      var proj = document.createElement('div');
+      proj.className = 'monProjectile';
+      proj.textContent = emoji;
+      var tx = ex - sx, ty = ey - sy;
+      proj.style.cssText = [
+        'left:' + sx + 'px', 'top:' + sy + 'px',
+        '--tx:' + tx + 'px', '--ty:' + ty + 'px',
+        'font-size:34px',
+        'animation:projMonToHero .5s cubic-bezier(.22,1,.36,1) forwards'
+      ].join(';');
+      layer.appendChild(proj);
+      setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 560);
+
+      setTimeout(function() {
+        var ring = document.createElement('div');
+        ring.className = 'monBurstRing';
+        ring.style.left = (ex - layerR.left) + 'px';
+        ring.style.top  = (ey - layerR.top)  + 'px';
+        layer.appendChild(ring);
+        setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 780);
+
+        var core = document.createElement('div');
+        core.className = 'monCore';
+        core.style.left = (ex - layerR.left) + 'px';
+        core.style.top  = (ey - layerR.top)  + 'px';
+        layer.appendChild(core);
+        setTimeout(function() { if (core.parentNode) core.parentNode.removeChild(core); }, 680);
+
+        var imp = document.createElement('div');
+        imp.className = 'impactFx';
+        imp.textContent = '☠️';
+        imp.style.cssText = 'left:' + (ex-22) + 'px;top:' + (ey-22) + 'px;color:#9B30FF';
+        layer.appendChild(imp);
+        setTimeout(function() { if (imp.parentNode) imp.parentNode.removeChild(imp); }, 600);
+
+        spawnImpactGif(PROJ_EMOJIS.mon.gif, ex, ey, layer);
+      }, 380);
+    }
+
+    // LEVEL 4 — serangan PALING DAHSYAT (khas BOSS memakai skill2/ultimate):
+    // proyektil datang dari segala penjuru layar + layar berguncang hebat +
+    // kilatan gelap + beam ungu-merah + retakan energi di titik hantaman
+    function monFxLevel4(endX, endY, layer, layerR, battle) {
+      if (battle) {
+        var flash = document.createElement('div');
+        flash.className = 'monFlashOverlay';
+        battle.appendChild(flash);
+        setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 620);
+
+        var vig = document.createElement('div');
+        vig.className = 'monVignette';
+        battle.appendChild(vig);
+        setTimeout(function() { if (vig.parentNode) vig.parentNode.removeChild(vig); }, 680);
+
+        battle.classList.remove('monShake'); void battle.offsetWidth;
+        battle.classList.add('monShake');
+        setTimeout(function() { battle.classList.remove('monShake'); }, 560);
+      }
+
+      var w = layerR.width, h = layerR.height;
+      var starts = [
+        { x: layerR.left + w*.5,  y: layerR.top - 40 },
+        { x: layerR.left + w*.5,  y: layerR.top + h + 40 },
+        { x: layerR.left - 40,    y: layerR.top + h*.5 },
+        { x: layerR.left + w+40,  y: layerR.top + h*.5 },
+        { x: layerR.left - 30,    y: layerR.top - 30 },
+        { x: layerR.left + w+30,  y: layerR.top - 30 }
+      ];
+
+      starts.forEach(function(st, i) {
+        setTimeout(function() {
+          var proj = document.createElement('div');
+          proj.className = 'monProjectile';
+          proj.textContent = MON_ULTI_EMOJIS[i % MON_ULTI_EMOJIS.length];
+          var tx = endX - st.x, ty = endY - st.y;
+          proj.style.cssText = [
+            'left:' + st.x + 'px', 'top:' + st.y + 'px',
+            '--tx:' + tx + 'px', '--ty:' + ty + 'px',
+            'animation:monConverge .48s cubic-bezier(.22,1,.36,1) forwards'
+          ].join(';');
+          layer.appendChild(proj);
+          setTimeout(function() { if (proj.parentNode) proj.parentNode.removeChild(proj); }, 520);
+        }, i * 35);
+      });
+
+      setTimeout(function() {
+        var beamCount = 8;
+        for (var b = 0; b < beamCount; b++) {
+          var beam = document.createElement('div');
+          beam.className = 'monBeam';
+          var ang = (360 / beamCount) * b;
+          beam.style.cssText = [
+            'left:' + (endX - layerR.left) + 'px',
+            'top:'  + (endY - layerR.top)  + 'px',
+            'width:' + Math.max(w, h) * .8 + 'px',
+            '--ang:' + ang + 'deg'
+          ].join(';');
+          layer.appendChild(beam);
+          (function(elm) { setTimeout(function() { if (elm.parentNode) elm.parentNode.removeChild(elm); }, 520); })(beam);
+        }
+
+        var core = document.createElement('div');
+        core.className = 'monCore';
+        core.style.left = (endX - layerR.left) + 'px';
+        core.style.top  = (endY - layerR.top)  + 'px';
+        layer.appendChild(core);
+        setTimeout(function() { if (core.parentNode) core.parentNode.removeChild(core); }, 680);
+
+        var ring = document.createElement('div');
+        ring.className = 'monBurstRing';
+        ring.style.left = (endX - layerR.left) + 'px';
+        ring.style.top  = (endY - layerR.top)  + 'px';
+        layer.appendChild(ring);
+        setTimeout(function() { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 780);
+
+        var crack = document.createElement('div');
+        crack.className = 'monCrack';
+        crack.textContent = '💢';
+        crack.style.left = (endX - layerR.left) + 'px';
+        crack.style.top  = (endY - layerR.top)  + 'px';
+        layer.appendChild(crack);
+        setTimeout(function() { if (crack.parentNode) crack.parentNode.removeChild(crack); }, 620);
+
+        spawnImpactGif(PROJ_EMOJIS.mon.gif, endX, endY, layer);
+      }, 420);
+    }
+
     function fadeOutMonster(cb) {
       var monEl = document.getElementById('monFloat');
       if (!monEl) { if (cb) cb(); return; }

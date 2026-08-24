@@ -548,6 +548,43 @@
           20%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}
           70%{opacity:1;transform:translate(-50%,-50%) scale(1)}
           100%{opacity:0;transform:translate(-50%,-50%) scale(.88) translateY(-18px)}}
+
+        /* ── LEVEL UP BANNER — muncul di atas layar apa pun (bukan cuma sBattle) ── */
+        .levelUpBanner{position:fixed;inset:0;z-index:10000;pointer-events:none;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;
+          gap:4px;background:radial-gradient(circle at 50% 45%,rgba(20,0,40,.55) 0%,
+            rgba(8,8,16,.25) 45%,rgba(8,8,16,0) 78%);
+          animation:luFadeWrap 2.6s ease-out forwards}
+        @keyframes luFadeWrap{0%{opacity:0}10%{opacity:1}82%{opacity:1}100%{opacity:0}}
+        .luRay{position:absolute;width:140vmax;height:140vmax;
+          background:conic-gradient(from 0deg,rgba(255,215,0,0) 0deg,rgba(255,215,0,.22) 8deg,
+            rgba(255,215,0,0) 16deg,rgba(255,215,0,0) 40deg,rgba(0,229,255,.18) 48deg,
+            rgba(255,215,0,0) 56deg,rgba(255,215,0,0) 80deg,rgba(255,215,0,.2) 88deg,
+            rgba(255,215,0,0) 96deg);
+          animation:luRaySpin 2.6s linear forwards}
+        @keyframes luRaySpin{0%{transform:rotate(0deg)}100%{transform:rotate(140deg)}}
+        .luStar{font-size:clamp(38px,10vw,64px);
+          filter:drop-shadow(0 0 22px var(--gold));
+          animation:luStarPop .55s cubic-bezier(.22,1.6,.4,1) forwards}
+        @keyframes luStarPop{
+          0%{opacity:0;transform:scale(.2) rotate(-40deg)}
+          60%{opacity:1;transform:scale(1.25) rotate(12deg)}
+          100%{opacity:1;transform:scale(1) rotate(0deg)}}
+        .luTitle{font-family:var(--F1);font-size:clamp(24px,7vw,46px);
+          background:linear-gradient(150deg,var(--gold) 0%,#fffbe0 45%,var(--cyan) 100%);
+          -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+          filter:drop-shadow(0 0 20px rgba(255,215,0,.55));
+          animation:luTitlePop .5s ease-out .1s both}
+        @keyframes luTitlePop{0%{opacity:0;transform:translateY(14px) scale(.85)}100%{opacity:1;transform:translateY(0) scale(1)}}
+        .luLevel{font-family:var(--F2);font-size:clamp(16px,4.4vw,26px);font-weight:900;
+          letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px var(--cyan);
+          animation:luTitlePop .5s ease-out .2s both}
+        .luSrc{font-family:var(--F3);font-size:12px;letter-spacing:2px;
+          color:rgba(210,195,235,.8);text-transform:uppercase;
+          animation:luTitlePop .5s ease-out .3s both}
+        .luBonus{margin-top:6px;font-family:var(--F2);font-size:11px;letter-spacing:2px;
+          color:var(--green);text-shadow:0 0 10px var(--green);
+          animation:luTitlePop .5s ease-out .4s both}
         #skillPanel{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
           z-index:30;display:flex;align-items:flex-end;gap:10px}
         .sBtn{position:relative;border-radius:50%;display:flex;flex-direction:column;
@@ -1049,7 +1086,7 @@
     <button id="btnMenuShop" onclick="openShop()">☰</button>
     <div id="hudTop">
         <div class="hCard hHero">
-            <div class="hCardName gold">⚔ <span id="hudHeroName">HERO</span> <span class="lvBadge">LV.1</span></div>
+            <div class="hCardName gold">⚔ <span id="hudHeroName">HERO</span> <span class="lvBadge" id="hudHeroLv">LV.1</span></div>
             <div class="barWrap"><div class="barFill bHPHero" id="heroHPBar" style="width:100%"></div></div>
             <div class="barVal"><span id="heroHPVal">100</span>/<span id="heroHPMax">100</span> HP</div>
             <div class="barWrap"><div class="barFill bMPHero" id="heroMPBar" style="width:100%"></div></div>
@@ -1293,8 +1330,12 @@
       monWaveIdx: 0,
       monstersNow: [],
     
-      hero: { hp:100, maxHp:100, mp:100, maxMp:100, dmgAtk:10, dmgS1:15, dmgS2:20, dmgUlti:40 },
+      hero: { hp:100, maxHp:100, mp:100, maxMp:100, dmgAtk:10, dmgS1:15, dmgS2:20, dmgUlti:40, level:1 },
       mon : { hp:50, maxHp:50, mp:30, dmgS1:8, dmgS2:12, dmgUlti:25, spd:5, data:null },
+
+      // ── Level up hero: dipicu oleh 3 sumber (lihat checkLevelUp* di bawah) ──
+      heroAtkCount      : 0,  // hitung serangan sukses ke monster (naik level tiap 50x)
+      totalDiamondsEarned: 0, // hitung total diamond yang PERNAH didapat (naik level tiap 3)
     
       heroName     : '',
       heroKelas    : '',
@@ -1639,6 +1680,17 @@
     var HEAL_S1_BASE = 20;   // HP dasar yang dipulihkan Skill 1
     var HARGA_DIAMOND_KE_POIN = 100000; // 1 diamond = 100.000 poin
 
+    // ════════════════════════════════════════════
+    //  LEVEL UP HERO
+    //  Naik level (menambah HP maksimum hero) dari 3 sumber:
+    //   1) Setiap 50x serangan sukses ke monster
+    //   2) Setiap kali menyelesaikan 1 pulau
+    //   3) Setiap mendapat 3 diamond (akumulasi total, bukan saldo saat ini)
+    // ════════════════════════════════════════════
+    var LEVEL_UP_ATTACK_EVERY   = 50;  // jumlah serangan untuk 1x level up
+    var LEVEL_UP_DIAMOND_EVERY  = 3;   // jumlah diamond untuk 1x level up
+    var LEVEL_UP_HP_BONUS       = 20;  // pertambahan HP maksimum tiap level up
+
     function addPoin(jumlah, janganAnimasi) {
       G.battlePoin += jumlah;
       if (G.battlePoin < 0) G.battlePoin = 0;
@@ -1670,6 +1722,67 @@
           hud.classList.add('pop');
         }
       }
+    }
+
+    // ════════════════════════════════════════════
+    //  LEVEL UP HERO
+    // ════════════════════════════════════════════
+
+    // Naikkan level hero: tambah HP maksimum + pulihkan sejumlah bonus HP,
+    // lalu tampilkan banner perayaan supaya pemain sadar dia naik level.
+    function levelUpHero(sumberLabel) {
+      G.hero.level = (G.hero.level || 1) + 1;
+      G.hero.maxHp += LEVEL_UP_HP_BONUS;
+      G.hero.hp = Math.min(G.hero.maxHp, G.hero.hp + LEVEL_UP_HP_BONUS);
+
+      updateHeroLevelHUD();
+      updateHeroHUD();
+      showLevelUpBanner(G.hero.level, sumberLabel);
+      toast('⭐ LEVEL UP! Hero naik ke LV.' + G.hero.level + ' (+' + LEVEL_UP_HP_BONUS + ' HP Maks)', 'tSuccess');
+    }
+
+    function updateHeroLevelHUD() {
+      var el = document.getElementById('hudHeroLv');
+      if (el) el.textContent = 'LV.' + (G.hero.level || 1);
+    }
+
+    // Dipanggil tiap kali hero berhasil menyerang monster (bukan heal).
+    // Naik level otomatis setiap kelipatan LEVEL_UP_ATTACK_EVERY serangan.
+    function checkLevelUpFromAttack() {
+      G.heroAtkCount = (G.heroAtkCount || 0) + 1;
+      if (G.heroAtkCount % LEVEL_UP_ATTACK_EVERY === 0) {
+        levelUpHero((G.heroAtkCount) + 'x SERANGAN');
+      }
+    }
+
+    // Dipanggil tiap kali dapat 1 diamond baru (akumulasi total, bukan saldo
+    // saat ini — supaya menukar/membelanjakan diamond tidak mengurangi progres level).
+    function checkLevelUpFromDiamond() {
+      G.totalDiamondsEarned = (G.totalDiamondsEarned || 0) + 1;
+      if (G.totalDiamondsEarned % LEVEL_UP_DIAMOND_EVERY === 0) {
+        levelUpHero(LEVEL_UP_DIAMOND_EVERY + ' 💎 DIAMOND');
+      }
+    }
+
+    // Dipanggil tiap kali 1 pulau selesai ditaklukkan.
+    function checkLevelUpFromIsland() {
+      levelUpHero('PULAU SELESAI');
+    }
+
+    // Banner perayaan level up — fixed di seluruh layar (bukan cuma di sBattle)
+    // supaya tetap muncul walau level up terjadi di layar pulau/cerita.
+    function showLevelUpBanner(newLevel, sourceLabel) {
+      var wrap = document.createElement('div');
+      wrap.className = 'levelUpBanner';
+      wrap.innerHTML =
+        '<div class="luRay"></div>' +
+        '<div class="luStar">⭐</div>' +
+        '<div class="luTitle">LEVEL UP!</div>' +
+        '<div class="luLevel">LV. ' + newLevel + '</div>' +
+        '<div class="luSrc">' + sourceLabel + '</div>' +
+        '<div class="luBonus">+' + LEVEL_UP_HP_BONUS + ' HP MAKS</div>';
+      document.body.appendChild(wrap);
+      setTimeout(function() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 2600);
     }
 
     // ════════════════════════════════════════════
@@ -1894,9 +2007,13 @@
       G.hero.dmgS1   = h.damage_skil1;
       G.hero.dmgS2   = h.damage_skil2;
       G.hero.dmgUlti = h.damage_ulti;
+      G.hero.level   = 1;
+      G.heroAtkCount = 0;
+      G.totalDiamondsEarned = 0;
       G.pulauIdx = -1; // Set to -1 sebagai indikator belum memilih pulau
       G.diamonds = 0;
       G.fragments = 0;
+      updateHeroLevelHUD();
     
       // Lanjut ke halaman pemilihan pulau
       showIslandSelectScreen();
@@ -2186,6 +2303,8 @@
               if (!G.completedIslands) G.completedIslands = [];
               if (G.completedIslands.indexOf(idx) === -1) {
                 G.completedIslands.push(idx);
+                // Mekanisme level up: naik level tiap kali 1 pulau selesai
+                checkLevelUpFromIsland();
               }
               // Cek apakah ada pulau selanjutnya
               var nextIdx = idx + 1;
@@ -2342,6 +2461,8 @@
         G.diamonds++;
         spawnDiamondBurst('💎');
         toast('💎 +1 Diamond!', 'tSuccess');
+        // Cek mekanisme level up: naik level tiap total 3 diamond yang didapat
+        checkLevelUpFromDiamond();
       } else {
         spawnDiamondBurst('🔷');
       }
@@ -2600,6 +2721,9 @@
       // pertarungan berlangsung dan akan dilipatgandakan jika monster kalah.
       G.pointsThisFight += POIN_PER_SERANG;
       addPoin(POIN_PER_SERANG);
+
+      // Hitung serangan untuk mekanisme level up (naik level tiap 50x serangan)
+      checkLevelUpFromAttack();
 
       // Menyerang mengisi kembali Magic Power (MP) sedikit demi sedikit,
       // supaya Skill 1 (heal) bisa dipakai lagi nanti.
@@ -2947,6 +3071,10 @@
         G.battlePoin = 0;
         G.pointsThisFight = 0;
         G.upgLevel = { atk:0, skill:0, ulti:0 };
+        G.hero.level = 1;
+        G.heroAtkCount = 0;
+        G.totalDiamondsEarned = 0;
+        updateHeroLevelHUD();
         setupCover();
         showScreen('sCover');
       };
@@ -2960,9 +3088,10 @@
       var p = document.getElementById('infoPopup');
       if (who === 'hero') {
         document.getElementById('infoTitle').textContent = G.heroName || 'HERO';
-        document.getElementById('infoSub').textContent   = 'Pahlawan Pengetahuan';
+        document.getElementById('infoSub').textContent   = 'Pahlawan Pengetahuan  •  LV.' + (G.hero.level || 1);
         document.getElementById('infoPort').src = G.heroImgSrc || '';
         document.getElementById('infoBody').innerHTML =
+          sr('Level', G.hero.level || 1) +
           sr('HP', G.hero.hp+'/'+G.hero.maxHp) +
           sr('MP', G.hero.mp+'/'+G.hero.maxMp) +
           sr('ATK Serang', G.hero.dmgAtk) +
@@ -3005,6 +3134,8 @@
       document.getElementById('heroMPBar').style.width = mp + '%';
       document.getElementById('heroMPVal').textContent = G.hero.mp;
       document.getElementById('heroMPMax').textContent = G.hero.maxMp;
+
+      updateHeroLevelHUD();
     }
     function updateMonHUD() {
       var p = G.mon.maxHp > 0 ? Math.max(0, (G.mon.hp / G.mon.maxHp) * 100) : 0;

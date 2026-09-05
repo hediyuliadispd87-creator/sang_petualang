@@ -167,7 +167,10 @@
         .hsetup-box{position:relative;width:min(400px,95vw);background:var(--glassMid);
           border:1px solid rgba(255,215,0,.28);border-radius:20px;padding:28px 24px 24px;
           backdrop-filter:blur(16px);box-shadow:0 8px 48px rgba(0,0,0,.6);
-          display:flex;flex-direction:column;align-items:center;gap:20px;}
+          display:flex;flex-direction:column;align-items:center;gap:20px;
+          max-height:92vh;overflow-y:auto;overflow-x:hidden;}
+        .hsetup-box::-webkit-scrollbar{width:4px}
+        .hsetup-box::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3);border-radius:3px}
         .hsetup-eyebrow{font-family:var(--F2);font-size:9px;letter-spacing:4px;color:var(--gold);opacity:.7}
         .hsetup-title{font-family:var(--F1);font-size:clamp(16px,4.5vw,22px);
           color:var(--gold);text-shadow:0 0 18px rgba(255,215,0,.4);text-align:center}

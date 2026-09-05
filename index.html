@@ -1019,6 +1019,17 @@
         <div id="hsetupSiswaHint" style="width:100%;font-size:11px;color:rgba(255,255,255,.4);margin-top:-6px;">
             Mode otomatis: pilih kelas dulu, lalu pilih namamu dari daftar sesuai kelas itu.
         </div>
+        <div class="hsetup-field">
+            <div class="hsetup-label">MATERI</div>
+            <!-- Pilih materi pelajaran: hanya Quis, Pulau & Monster dengan
+                 materi2 yang sama yang akan ditampilkan di game -->
+            <select id="hsetupMateriSelect" class="hsetup-input" onchange="hsetupPreviewMateri(this.value)">
+                <option value="">— Pilih materi —</option>
+            </select>
+        </div>
+        <div id="hsetupMateriHint" style="width:100%;font-size:11px;color:rgba(255,255,255,.4);margin-top:-6px;">
+            Pilih materi pelajaran terlebih dahulu. Hanya quis, pulau & monster sesuai materi ini yang akan muncul.
+        </div>
         <button class="btn-hsetup-confirm" id="btnHsetupOK" onclick="hsetupConfirm()">
             ⚔ MULAI PETUALANGAN
         </button>
@@ -1403,6 +1414,10 @@
 
         // Siapkan data siswa (dari sheet "siswa") untuk form NAMA/KELAS
         setupSiswaData(D.siswa || []);
+
+        // Siapkan daftar MATERI (dari server, atau dihitung sendiri dari
+        // sheet "pulau" & "monster" kalau server belum mengirim materiList)
+        setupMateriData(D.materiList);
     
         prog(65, 'Menyiapkan hero...');
         loadImg('', D.hero.gambar_hero, function(src) {
@@ -1634,6 +1649,56 @@
           }
         }
       });
+    }
+
+    // ════════════════════════════════════════════
+    //  DATA MATERI (dari sheet "quis", "pulau" & "monster", kolom "materi2")
+    //  Dipakai sebagai FILTER: siswa pilih materi di form hero setup,
+    //  lalu hanya Quis, Pulau & Monster dengan materi2 yang sama yang tampil.
+    //  (Kolom "materi" di sheet pulau BUKAN ini — itu teks isi pelajaran.)
+    // ════════════════════════════════════════════
+    var MATERI_LIST = []; // daftar materi2 unik, string
+
+    function setupMateriData(serverMateriList) {
+      var set = {};
+      MATERI_LIST = [];
+
+      function addMateri(v) {
+        v = (v || '').toString().trim();
+        if (v && !set[v]) { set[v] = true; MATERI_LIST.push(v); }
+      }
+
+      if (serverMateriList && serverMateriList.length) {
+        serverMateriList.forEach(addMateri);
+      } else {
+        // Fallback: hitung sendiri dari data quis, pulau & monster yang sudah dimuat
+        (D.quis    || []).forEach(function(q) { addMateri(q.materi2); });
+        (D.pulau   || []).forEach(function(p) { addMateri(p.materi2); });
+        (D.monster || []).forEach(function(m) { addMateri(m.materi2); });
+        MATERI_LIST.sort(function(a, b) { return a.localeCompare(b, 'id'); });
+      }
+
+      var sel = document.getElementById('hsetupMateriSelect');
+      if (!sel) return;
+      sel.innerHTML = MATERI_LIST.length
+        ? '<option value="">— Pilih materi —</option>'
+        : '<option value="">— Belum ada materi di spreadsheet —</option>';
+
+      MATERI_LIST.forEach(function(m) {
+        var opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        sel.appendChild(opt);
+      });
+    }
+
+    function hsetupPreviewMateri(val) {
+      var hint = document.getElementById('hsetupMateriHint');
+      if (!hint) return;
+      val = (val || '').toString().trim();
+      hint.textContent = val
+        ? '📘 Materi dipilih: ' + val + '. Hanya quis, pulau & monster materi ini yang akan muncul.'
+        : 'Pilih materi pelajaran terlebih dahulu. Hanya quis, pulau & monster sesuai materi ini yang akan muncul.';
     }
 
     // ════════════════════════════════════════════
@@ -1983,8 +2048,16 @@
         return;
       }
 
-      G.heroName  = nameVal;
-      G.heroKelas = kelasVal || '';
+      var materiVal = document.getElementById('hsetupMateriSelect').value.trim();
+      if (!materiVal && MATERI_LIST.length) {
+        // Materi wajib dipilih HANYA jika memang ada data materi di spreadsheet
+        toast('⚠ Pilih materi dulu!', 'tDanger');
+        return;
+      }
+
+      G.heroName     = nameVal;
+      G.heroKelas    = kelasVal || '';
+      G.selectedMateri = materiVal;
       G.poinSaved = false; // reset supaya poin sesi baru bisa terekam
       if (G.heroImgLocal) G.heroImgSrc = G.heroImgLocal;
 
@@ -2081,8 +2154,16 @@
       });
       var targetLok = allLok[pulauIdx] || '';
       if (!targetLok) return [];
+
+      // Filter berdasarkan lokasi_pulau, DAN (jika diisi) berdasarkan materi2
+      // -> hanya soal dengan materi2 yang sama dengan materi terpilih siswa
+      // yang boleh muncul.
+      var materiAktif = (G.selectedMateri || '').toString().trim().toLowerCase();
       return (D.quis || []).filter(function(q) {
-        return (q.lokasi_pulau || '').toString().trim().toLowerCase() === targetLok;
+        if ((q.lokasi_pulau || '').toString().trim().toLowerCase() !== targetLok) return false;
+        var quisMateri2 = (q.materi2 || '').toString().trim();
+        if (materiAktif && quisMateri2 && quisMateri2.toLowerCase() !== materiAktif) return false;
+        return true;
       });
     }
     
@@ -2121,8 +2202,24 @@
       }
       
       islandListEl.innerHTML = '';
-      
+
+      // Materi terpilih di form hero setup. idx pulau TIDAK diubah/di-reindex
+      // (tetap sama seperti D.pulau aslinya) supaya mapping monster
+      // (m._pulauIdx) & quis (lokasi_pulau) tetap valid — hanya pulau yang
+      // materinya tidak cocok yang disembunyikan (di-skip) dari daftar.
+      var materiAktif = (G.selectedMateri || '').toString().trim().toLowerCase();
+
+      var adaYangTampil = false;
+
       (D.pulau || []).forEach(function(pulau, idx) {
+        var pulauMateri2 = (pulau.materi2 || '').toString().trim();
+        // Skip pulau yang materi2-nya tidak cocok dengan materi terpilih.
+        // Pulau tanpa materi2 diisi (kosong) tetap ditampilkan (backward compatible).
+        if (materiAktif && pulauMateri2 && pulauMateri2.toLowerCase() !== materiAktif) {
+          return;
+        }
+
+        adaYangTampil = true;
         var isCompleted = G.completedIslands && G.completedIslands.indexOf(idx) !== -1;
         var card = document.createElement('div');
         card.className = 'island-card' + (isCompleted ? ' completed' : '');
@@ -2135,13 +2232,20 @@
         var title = pulau.nama_pulau || ('Pulau ' + pulauNo);
         var desc = pulau.deskripsi_pulau || 'Jelajahi pulau ini untuk menguji pengetahuanmu';
         var status = isCompleted ? '✓ SELESAI' : 'Klik untuk bermain';
+        var materiBadge = pulauMateri2
+          ? '<div style="display:inline-block;margin-top:8px;padding:3px 10px;border-radius:12px;' +
+            'background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);' +
+            'font-family:var(--F2);font-size:9px;letter-spacing:1px;color:var(--gold);">' +
+            '📘 ' + pulauMateri2 + '</div>'
+          : '';
         
         card.innerHTML = 
           '<div style="font-family:var(--F1); font-size:16px; ' + 
           'color:' + (isCompleted ? 'var(--green)' : 'var(--cyan)') + '; margin-bottom:6px;">' + title + '</div>' +
           '<div style="font-family:var(--F3); font-size:12px; color:rgba(210,195,235,0.65); line-height:1.5;">' + desc + '</div>' +
           '<div style="font-family:var(--F2); font-size:10px; letter-spacing:1px; color:' + 
-          (isCompleted ? 'var(--green)' : 'rgba(0,229,255,0.5)') + '; margin-top:8px;">' + status + '</div>';
+          (isCompleted ? 'var(--green)' : 'rgba(0,229,255,0.5)') + '; margin-top:8px;">' + status + '</div>' +
+          materiBadge;
         
         card.onclick = function() {
           if (G.completedIslands === undefined) G.completedIslands = [];
@@ -2160,6 +2264,12 @@
         
         islandListEl.appendChild(card);
       });
+
+      if (!adaYangTampil) {
+        islandListEl.innerHTML = '<div style="text-align:center;padding:20px;font-family:var(--F3);' +
+          'color:rgba(255,255,255,.5);font-size:13px;">Belum ada pulau untuk materi "' +
+          (G.selectedMateri || '') + '".<br>Hubungi gurumu untuk melengkapi data pulau.</div>';
+      }
       
       showScreen('sIslandSelect');
     }
@@ -2510,9 +2620,15 @@
       G.pulauIdx = pulauIdx;
       var pulau  = D.pulau[pulauIdx];
     
-      // Filter monster berdasarkan _pulauIdx yang sudah di-assign saat data load
+      // Filter monster berdasarkan _pulauIdx yang sudah di-assign saat data load,
+      // DAN (jika diisi) berdasarkan materi2 -> hanya monster dengan materi2
+      // yang sama dengan materi terpilih siswa yang boleh muncul di pertarungan.
+      var materiAktif = (G.selectedMateri || '').toString().trim().toLowerCase();
       G.monstersNow = (D.monster || []).filter(function(m) {
-        return m._pulauIdx === pulauIdx;
+        if (m._pulauIdx !== pulauIdx) return false;
+        var monMateri2 = (m.materi2 || '').toString().trim();
+        if (materiAktif && monMateri2 && monMateri2.toLowerCase() !== materiAktif) return false;
+        return true;
       });
     
       if (!G.monstersNow.length) {
@@ -2531,7 +2647,8 @@
         document.getElementById('battleBg').src = src;
       });
     
-      document.getElementById('islandTag').textContent = 'PULAU ' + getPulauNo(pulau);
+      document.getElementById('islandTag').textContent = 'PULAU ' + getPulauNo(pulau) +
+        (pulau.materi2 ? ' · ' + pulau.materi2 : '');
     
       loadHeroHUD();
       loadMonster(G.monstersNow[0]);

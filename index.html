@@ -1398,21 +1398,47 @@
         if (!json.ok) { toast('Error: ' + json.error, 'tDanger'); return; }
         D = json.data;
     
-        // Pastikan pulau diurutkan berdasarkan posisi di sheet (index 0,1,2,...)
-        // Assign pulauNo = index+1 karena lokasi_pulau di sheet tidak bisa diandalkan
-        D.pulau.forEach(function(p, i) { p._idx = i; p._no = i + 1; });
-    
-        // Sortir monster: assign ke pulau berdasarkan urutan lokasi unik di monster sheet
-        // monster[0,1] lokasi "pulau 1" -> pulau ke-0, lokasi "pulau 2" -> pulau ke-1, dst
-        var lokasiUrut = [];
-        D.monster.forEach(function(m) {
-          var lok = (m.lokasi || '').toString().trim().toLowerCase();
-          if (lok && lokasiUrut.indexOf(lok) === -1) lokasiUrut.push(lok);
+        // Nomor pulau (_no) direset PER MATERI2. Jadi kalau ada materi2
+        // "klasifikasi" berisi pulau 1-5 lalu materi2 "introduction" berisi
+        // pulau 1-4, keduanya sama-sama mulai dari "Pulau 1" (tidak nyambung
+        // jadi "Pulau 6"). Kalau materi2 kosong semua, ini otomatis sama
+        // seperti penomoran lama (1,2,3,... global).
+        var _noCounter = {}; // { materi2Key: hitungan berjalan }
+        D.pulau.forEach(function(p, i) {
+          p._idx = i;
+          var mk = (p.materi2 || '').toString().trim().toLowerCase();
+          _noCounter[mk] = (_noCounter[mk] || 0) + 1;
+          p._no = _noCounter[mk];
         });
-        // lokasiUrut = ["pulau 1", "pulau 2", ...] sesuai urutan muncul di sheet
+
+        // Ambil angka pertama dari sebuah teks, mis. "pulau 3" -> 3
+        function _extractNum(str) {
+          var m = (str || '').toString().match(/\d+/);
+          return m ? parseInt(m[0], 10) : null;
+        }
+        window._extractNum = _extractNum; // dipakai juga oleh getQuisByPulauIdx
+
+        // Cocokkan monster ke pulau berdasarkan: nomor di kolom "lokasi"
+        // (mis. "pulau 1" -> nomor 1) DAN materi2 yang sama dengan pulau
+        // tujuannya. Ini penting supaya monster "pulau 1" milik materi2
+        // "introduction" tidak salah nyangkut ke pulau "pulau 1" milik
+        // materi2 "klasifikasi".
         D.monster.forEach(function(m) {
-          var lok = (m.lokasi || '').toString().trim().toLowerCase();
-          m._pulauIdx = lokasiUrut.indexOf(lok); // 0-based index
+          var lokNum     = _extractNum(m.lokasi);
+          var monMateri2 = (m.materi2 || '').toString().trim().toLowerCase();
+          var targetIdx  = -1;
+
+          if (lokNum !== null) {
+            for (var i = 0; i < D.pulau.length; i++) {
+              var p = D.pulau[i];
+              var pMateri2 = (p.materi2 || '').toString().trim().toLowerCase();
+              if (p._no === lokNum && pMateri2 === monMateri2) {
+                targetIdx = i;
+                break;
+              }
+            }
+          }
+          m._pulauIdx = targetIdx;
         });
 
         // Siapkan data siswa (dari sheet "siswa") untuk form NAMA/KELAS
@@ -2141,32 +2167,26 @@
     
     
     
-    // Helper: ambil soal quis berdasarkan index pulau (0-based)
-    // Mapping: lokasi unik quis diurutkan seperti monster
+    // Helper: ambil soal quis berdasarkan index pulau (0-based di D.pulau)
+    // Mapping: cocokkan angka di "lokasi_pulau" (mis. "pulau 1" -> 1) dengan
+    // nomor pulau (_no, sudah direset per materi2) DAN materi2 yang sama,
+    // supaya soal "pulau 1" milik materi2 "introduction" tidak salah
+    // nyangkut ke pulau "pulau 1" milik materi2 "klasifikasi".
     function getQuisByPulauIdx(pulauIdx) {
-      var allLok = [];
-      (D.quis || []).forEach(function(q) {
-        var lok = (q.lokasi_pulau || '').toString().trim().toLowerCase();
-        if (lok && allLok.indexOf(lok) === -1) allLok.push(lok);
-      });
-      // Sort agar konsisten: "pulau 1" < "pulau 2" < ... berdasarkan angka
-      allLok.sort(function(a, b) {
-        var na = parseInt(a.replace(/\D/g,'')) || 0;
-        var nb = parseInt(b.replace(/\D/g,'')) || 0;
-        return na - nb;
-      });
-      var targetLok = allLok[pulauIdx] || '';
-      if (!targetLok) return [];
+      var pulau = D.pulau[pulauIdx];
+      if (!pulau) return [];
+      var pulauNo      = getPulauNo(pulau);
+      var pulauMateri2 = (pulau.materi2 || '').toString().trim().toLowerCase();
+      var _extractNum  = window._extractNum || function(str) {
+        var m = (str || '').toString().match(/\d+/);
+        return m ? parseInt(m[0], 10) : null;
+      };
 
-      // Filter berdasarkan lokasi_pulau, DAN (jika diisi) berdasarkan materi2
-      // -> hanya soal dengan materi2 yang sama dengan materi terpilih siswa
-      // yang boleh muncul.
-      var materiAktif = (G.selectedMateri || '').toString().trim().toLowerCase();
       return (D.quis || []).filter(function(q) {
-        if ((q.lokasi_pulau || '').toString().trim().toLowerCase() !== targetLok) return false;
-        var quisMateri2 = (q.materi2 || '').toString().trim();
-        if (materiAktif && quisMateri2 && quisMateri2.toLowerCase() !== materiAktif) return false;
-        return true;
+        var lokNum = _extractNum(q.lokasi_pulau);
+        if (lokNum !== pulauNo) return false;
+        var quisMateri2 = (q.materi2 || '').toString().trim().toLowerCase();
+        return quisMateri2 === pulauMateri2;
       });
     }
     
@@ -2419,9 +2439,21 @@
                 // Mekanisme level up: naik level tiap kali 1 pulau selesai
                 checkLevelUpFromIsland();
               }
-              // Cek apakah ada pulau selanjutnya
-              var nextIdx = idx + 1;
-              var nextPulau = D.pulau[nextIdx];
+              // Cek apakah masih ada pulau lain (materi2 sama dgn yang
+              // dipilih siswa) yang belum selesai. TIDAK pakai idx+1 lagi
+              // karena itu mengasumsikan semua pulau 1 materi2 saja —
+              // kalau ada beberapa materi2 di sheet yang sama, idx+1 bisa
+              // nyasar ke pulau materi2 lain.
+              var materiAktif = (G.selectedMateri || '').toString().trim().toLowerCase();
+              var nextPulau = null;
+              for (var ni = 0; ni < D.pulau.length; ni++) {
+                var np = D.pulau[ni];
+                var npMateri2 = (np.materi2 || '').toString().trim().toLowerCase();
+                if (materiAktif && npMateri2 && npMateri2 !== materiAktif) continue; // materi2 beda, lewati
+                if (G.completedIslands.indexOf(ni) !== -1) continue; // sudah selesai
+                nextPulau = np;
+                break;
+              }
               if (!nextPulau) {
                 showEnding(
                   'https://www.dropbox.com/scl/fi/o2igkg57hx0vg0hlvwval/Menambahkan_Animasi_Ledakan_ke_Video.mp4?rlkey=zrq5g56vbjuex0jdmir820g2h&st=1i5gf465&dl=0',
